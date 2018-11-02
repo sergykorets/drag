@@ -1,0 +1,19 @@
+.room {
+  background: white;
+  border-radius: 10px;
+  padding: 20px;
+  margin: 10px;
+}
+.room-calendar {
+  height: 800px;
+}
+.rbc-toolbar {
+  .rbc-btn-group:first-child {
+    button:first-child {
+      display: none;
+    }
+  }
+  .rbc-btn-group:last-child {
+    display: none;
+  }
+}

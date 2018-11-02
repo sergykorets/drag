@@ -39,7 +39,6 @@ ReactOnRails.configure do |config|
   config.replay_console = true
   config.logging_on_server = true
   config.raise_on_prerender_error = false
-  config.prerender = true
   # While you may configure this to be the same as your client bundle file, this file is typically
   # different. You should have ONE server bundle which can create all of your server rendered
   # React components.

@@ -1,0 +1,33 @@
+.reservations {
+  .green {
+    background: darkgreen;
+  }
+  .red {
+    background: darkred;
+  }
+  .yellow {
+    background: yellow;
+  }
+}
+.reservation-form {
+  padding: 20px;
+  margin: 20px;
+  border-radius: 10px;
+  border: 1px solid lightgray;
+}
+.pagination a:first-child {
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+}
+
+.pagination a:last-child {
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+}
+.pagination a {
+  border: 1px solid #ddd;
+  padding: 10px 20px;
+}
+.pagination .active a {
+  background: white;
+}

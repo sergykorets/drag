@@ -1,5 +1,5 @@
 class HotelsController < ApplicationController
-  before_action :set_hotel, only: [:show, :edit, :update, :nearby]
+  before_action :set_hotel, only: [:show, :edit, :update, :nearby, :rooms, :reservation_list]
   before_action :check_session, only: :index
   before_action :authenticate_user!, only: [:create, :edit, :update]
 
@@ -107,15 +107,24 @@ class HotelsController < ApplicationController
     end
   end
 
-  # DELETE /hotels/1
-  # DELETE /hotels/1.json
-  # def destroy
-  #   @hotel.destroy
-  #   respond_to do |format|
-  #     format.html { redirect_to hotels_url, notice: 'Hotel was successfully destroyed.' }
-  #     format.json { head :no_content }
-  #   end
-  # end
+  def reservation_list
+    @hotel_id = @hotel.id
+    @reservations = @hotel.reservations.for_dates(@hotel, params[:start_date].try(:to_date) || Date.today, params[:end_date].try(:to_date) || Date.tomorrow)
+    @reservations_paginated = @reservations.page(params[:page] || 1).per(10).each_with_object({}) {|reservation, hash| hash[reservation.id] = {
+      id: reservation.id,
+      room: Room.find_by_id(reservation.room_id).number,
+      roomId: reservation.room_id,
+      name: reservation.name,
+      phone: reservation.phone,
+      places: reservation.places,
+      startDate: reservation.start_date,
+      endDate: reservation.end_date}
+    }
+    respond_to do |format|
+      format.html { render :reservation_list }
+      format.json {{reservations: @reservations_paginated, totalReservationsCount: @reservations }}
+    end
+  end
 
   private
     # Use callbacks to share common setup or constraints between actions.
@@ -125,7 +134,8 @@ class HotelsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def hotel_params
-      params.require(:hotel).permit(:name, :description, :hotel_type, :site, :main_photo_id, :main_photo_type, :price, phones_attributes: [:id, :phone, :_destroy],
+      params.require(:hotel).permit(:name, :description, :hotel_type, :site, :main_photo_id, :main_photo_type, :price,
+                                    rooms_attributes: [:id, :number, :floor, :places, :_destroy], phones_attributes: [:id, :phone, :_destroy],
                                     google_photos_attributes: [:id, :deleted], photos_attributes: [:id, :_destroy, photo: [:picture]])
     end
 

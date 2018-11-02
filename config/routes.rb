@@ -7,8 +7,13 @@ Rails.application.routes.draw do
                                        sessions: 'sessions',
                                        omniauth_callbacks: 'omniauth_callbacks' }
   resources :hotels do
-    resources :reviews
-    resources :photos
+    resources :rooms do
+      get :calendar, on: :collection
+    end
+    resources :reservations do
+      get :dates, on: :collection
+    end
+    get :reservation_list, on: :member
   end
   resources :restaurants, only: :index
   get 'reactivate/edit', 'reactivate#edit'

@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  hotel: one
+  floor: 1
+  number: 1
+  places: 1
+
+two:
+  hotel: two
+  floor: 1
+  number: 1
+  places: 1

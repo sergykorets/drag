@@ -10,6 +10,8 @@ class Hotel < ApplicationRecord
   has_many :google_photos
   has_many :google_reviews
   has_many :nearby_hotels
+  has_many :rooms
+  has_many :reservations
 
   validates_presence_of :name
   validates_uniqueness_of :google_id, allow_blank: true, allow_nil: true
@@ -17,6 +19,7 @@ class Hotel < ApplicationRecord
   accepts_nested_attributes_for :phones, allow_destroy: true
   accepts_nested_attributes_for :photos, allow_destroy: true
   accepts_nested_attributes_for :google_photos, allow_destroy: false
+  accepts_nested_attributes_for :rooms, allow_destroy: true
 
   def self.update_hotels
   	google_hotels = []

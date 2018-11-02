@@ -54,6 +54,7 @@ gem 'friendly_id', '~> 5.2.0'
 gem 'sitemap_generator'
 gem 'fog-aws'
 gem 'meta-tags'
+gem 'kaminari'
 
 group :development, :test do
   gem 'pry-rails'
