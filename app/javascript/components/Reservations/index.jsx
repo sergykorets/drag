@@ -3,6 +3,7 @@ import moment from 'moment'
 import RangePicker from 'bootstrap-daterangepicker';
 import DateRangePicker from 'react-bootstrap-daterangepicker';
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
+import {NotificationContainer, NotificationManager} from 'react-notifications';
 import Rooms from "../Rooms";
 
 export default class Reservations extends React.Component {
@@ -20,7 +21,7 @@ export default class Reservations extends React.Component {
       floor: '1',
       name: '',
       phone: '',
-      places: '',
+      places: 1,
       createModal: false,
       editModal: false,
       selectedRoomId: ''
@@ -88,7 +89,11 @@ export default class Reservations extends React.Component {
         }
       }
     }).then((resp) => {
-      this.setState({rooms: resp.rooms, createModal: false, name: '', phone: '', places: ''})
+      if (resp.success) {
+        this.setState({rooms: resp.rooms, createModal: false, name: '', phone: '', places: ''})
+      } else {
+        NotificationManager.error(resp.error, 'Неможливо створити');
+      }
     });
   }
 
@@ -138,7 +143,11 @@ export default class Reservations extends React.Component {
         end_date: this.state.endDate
       }
     }).then((resp) => {
-      this.setState({rooms: resp.rooms, editModal: false})
+      if (resp.success) {
+        this.setState({rooms: resp.rooms, editModal: false})
+      } else {
+        NotificationManager.error(resp.error, 'Неможливо створити');
+      }
     });
   }
 
@@ -160,6 +169,7 @@ export default class Reservations extends React.Component {
     console.log('Reservations', this.state)
     return (
       <div className="container reservations">
+        <NotificationContainer/>
         <div className='row'>
           <div className='col-lg-4'>
             <DateRangePicker onApply={this.handleDateChange} startDate={this.state.startDate} endDate={this.state.endDate}>
@@ -176,7 +186,7 @@ export default class Reservations extends React.Component {
           <div className='col-lg-4'>
             <select className='form-control' value={this.state.floor} onChange={(e) => this.handleFloorChange(e.target.value)}>
               { [...Array(parseInt(this.state.floors, 10))].map((e,i) =>
-                <option key={i} value={i+1}>{i+1}</option>
+                <option key={i} value={i+1}>Поверх {i+1}</option>
               )}
             </select>
           </div>
@@ -205,7 +215,11 @@ export default class Reservations extends React.Component {
               <label>Phone</label>
               <input type='text' className='form-control' value={this.state.phone} onChange={(e) => this.handleInputChange('phone', e.target.value)} />
               <label>Places</label>
-              <input type='number' className='form-control' value={this.state.places} onChange={(e) => this.handleInputChange('places', e.target.value)} />
+              <select className='form-control' value={this.state.places} onChange={(e) => this.handleInputChange('places', e.target.value)}>
+                { [...Array(parseInt(this.state.rooms[this.state.selectedRoomId].places, 10))].map((e,i) =>
+                  <option key={i} value={i+1}>{i+1}</option>
+                )}
+              </select>
               <button className='btn btn-block' onClick={this.handleSubmitReservation}>Submit</button>
             </div>
           </Modal>}
@@ -221,7 +235,11 @@ export default class Reservations extends React.Component {
                   <label>Phone</label>
                   <input type='text' className='form-control' value={reservation.phone} onChange={(e) => this.handleReservationChange(r, 'phone', e.target.value)} />
                   <label>Places</label>
-                  <input type='number' className='form-control' value={reservation.places} onChange={(e) => this.handleReservationChange(r, 'places', e.target.value)} />
+                  <select className='form-control' value={reservation.places} onChange={(e) => this.handleReservationChange(r, 'places', e.target.value)}>
+                    { [...Array(parseInt(this.state.rooms[this.state.selectedRoomId].places, 10))].map((e,i) =>
+                      <option key={i} value={i+1}>{i+1}</option>
+                    )}
+                  </select>
                 </div>
               )})}
             <button className='btn btn-block' onClick={this.handleSubmitEditReservation}>Submit</button>

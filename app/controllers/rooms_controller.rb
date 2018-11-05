@@ -39,7 +39,7 @@ class RoomsController < ApplicationController
   end
 
   def update
-    @hotel.rooms.find_by_id(params[:id]).update(room_params)
+    if @hotel.rooms.find_by_id(params[:id]).update(room_params)
     render json: {
       success: true,
       rooms: @hotel.rooms.in_floor(params[:floor]).each_with_object({}) {|room, hash| hash[room.id] = {
@@ -57,6 +57,9 @@ class RoomsController < ApplicationController
         }
       }
       }}
+    else
+      render json: {success: false}
+    end
   end
 
   private
