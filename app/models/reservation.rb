@@ -3,7 +3,7 @@ class Reservation < ApplicationRecord
   belongs_to :room
   belongs_to :hotel
 
-  validates_presence_of :room
+  validates_presence_of :room, :name
   validates :places, numericality: { greater_than: 0 }
   validate :check_availability
 
@@ -18,9 +18,9 @@ class Reservation < ApplicationRecord
     room_places = room.places
     existed_reservations = room.reservations.where('start_date < ? AND end_date > ?', end_date, start_date)
     sum = existed_reservations.map {|reservation| reservation.places}.sum
-    control_sum = id.nil? ? sum + places : start_date_changed? || end_date_changed? || room_id_changed? ? sum + places : sum
+    control_sum = id.nil? ? sum + places : start_date_changed? || end_date_changed? || room_id_changed? || places_changed? ? sum + places : sum
     if room_places < control_sum
-      errors.add(:base, 'Номер в цю дату зайнятий')
+      errors.add(:base, 'Цей номер в ці дати вже не помістить стільки гостей')
     end
   end
 end

@@ -15,7 +15,8 @@ class RoomsController < ApplicationController
     @hotel_id = @hotel.id
     @room = @hotel.rooms.find_by_id(params[:id]) || @hotel.rooms.first
     @rooms = @hotel.rooms.each_with_object({}) {|room, hash| hash[room.id] = {
-      number: room.number
+      number: room.number,
+      places: room.places
     }}
     @room = {
       id: @room.id,
@@ -40,22 +41,25 @@ class RoomsController < ApplicationController
 
   def update
     if @hotel.rooms.find_by_id(params[:id]).update(room_params)
-    render json: {
-      success: true,
-      rooms: @hotel.rooms.in_floor(params[:floor]).each_with_object({}) {|room, hash| hash[room.id] = {
-        id: room.id,
-        number: room.number,
-        floor: room.floor,
-        places: room.places,
-        reservations: room.reservations.for_dates(room, params[:start_date].to_date, params[:end_date].to_date).each_with_object({}) {|reservation, hash| hash[reservation.id] = {
-          id: reservation.id,
-          name: reservation.name,
-          phone: reservation.phone,
-          places: reservation.places,
-          startDate: reservation.start_date,
-          endDate: reservation.end_date}
-        }
-      }
+      render json: {
+        success: true,
+        rooms: @hotel.rooms.in_floor(params[:floor]).each_with_object({}) {|room, hash|
+          reservations = room.reservations.for_dates(room, params[:start_date].to_date, params[:end_date].to_date)
+          hash[room.id] = {
+            id: room.id,
+            number: room.number,
+            floor: room.floor,
+            places: room.places,
+            booked: reservations.pluck(:places).sum,
+            reservations: reservations.each_with_object({}) {|reservation, hash| hash[reservation.id] = {
+              id: reservation.id,
+              name: reservation.name,
+              phone: reservation.phone,
+              places: reservation.places,
+              startDate: reservation.start_date,
+              endDate: reservation.end_date}
+            }
+          }
       }}
     else
       render json: {success: false}

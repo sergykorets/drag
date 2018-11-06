@@ -129,17 +129,19 @@ export default class ReservationList extends React.Component {
   }
 
   deleteReservation = (id) => {
-    $.ajax({
-      url: `/hotels/${this.state.hotelId}/reservations/${id}.json`,
-      type: 'DELETE',
-      data: {
-        from_list: true,
-        start_date: this.state.startDate,
-        end_date: this.state.endDate
-      }
-    }).then((resp) => {
-      this.setState({reservations: resp.reservations, editModal: false})
-    });
+    if (confirm('Видалити дане бронювання?')) {
+      $.ajax({
+        url: `/hotels/${this.state.hotelId}/reservations/${id}.json`,
+        type: 'DELETE',
+        data: {
+          from_list: true,
+          start_date: this.state.startDate,
+          end_date: this.state.endDate
+        }
+      }).then((resp) => {
+        this.setState({reservations: resp.reservations, editModal: false})
+      });
+    }
   }
 
   handlePageChange = (page) => {
@@ -183,7 +185,7 @@ export default class ReservationList extends React.Component {
           newReservation: {
             name: '',
             phone: '',
-            places: '',
+            places: 1,
             startDate: moment(new Date).format('DD.MM.YYYY'),
             endDate: moment(new Date).add(1, 'days').format('DD.MM.YYYY'),
             roomId: Object.keys(this.state.rooms)[0]
@@ -201,21 +203,37 @@ export default class ReservationList extends React.Component {
     return (
       <div className="container reservation-list">
         <NotificationContainer/>
-        <DateRangePicker onApply={this.handleDateChange} startDate={this.state.startDate} endDate={this.state.endDate}>
-          <div className='row'>
-            <div className='col-lg-6'>
-              <input type="text" className='form-control' value={this.state.startDate}/>
+        <div className='top-actions'>
+          <DateRangePicker onApply={this.handleDateChange} startDate={this.state.startDate} endDate={this.state.endDate}>
+            <div className='row'>
+              <div className='col-lg-6'>
+                <label>Дата від:</label>
+                <input type="text" className='form-control' value={this.state.startDate}/>
+              </div>
+              <div className='col-lg-6'>
+                <label>Дата до:</label>
+                <input type="text" className='form-control' value={this.state.endDate}/>
+              </div>
             </div>
-            <div className='col-lg-6'>
-              <input type="text" className='form-control' value={this.state.endDate}/>
-            </div>
-          </div>
-        </DateRangePicker>
-        <button className='btn-default' onClick={() => this.handleModal('createModal', '')}>New Reservation</button>
+          </DateRangePicker>
+          <button className='btn-dark' onClick={() => this.handleModal('createModal', '')}>Створити нове бронювання</button>
+        </div>
+        <hr/>
+        { this.state.totalReservationsCount > 10 &&
+        <Fragment>
+          <Pagination
+            activePage={this.state.activePage}
+            itemsCountPerPage={10}
+            totalItemsCount={this.state.totalReservationsCount}
+            pageRangeDisplayed={Math.ceil(this.state.totalReservationsCount/10)}
+            onChange={this.handlePageChange}
+          />
+          <hr/>
+        </Fragment>}
         <table className='table reservation'>
           <thead>
           <tr>
-            { ['room', 'name', 'phone', 'places', 'startDate', 'endDate', 'actions'].map((field, index) => {
+            { ['Номер', 'Гість', 'Телефон', 'К-ть місць', 'Початок', 'Кінець', 'Дії'].map((field, index) => {
               return (
                 <th key={index}>
                   {field}
@@ -234,39 +252,42 @@ export default class ReservationList extends React.Component {
                   <td>{reservation.places}</td>
                   <td>{reservation.startDate}</td>
                   <td>{reservation.endDate}</td>
-                  <td><button className='btn-dark' onClick={() => this.handleModal('editModal', r)}>Edit</button></td>
+                  <td><button className='btn-dark' onClick={() => this.handleModal('editModal', r)}>Редагувати</button></td>
                 </tr>
             )})}
           </tbody>
         </table>
         { this.state.totalReservationsCount > 10 &&
-          <Pagination
-            activePage={this.state.activePage}
-            itemsCountPerPage={10}
-            totalItemsCount={this.state.totalReservationsCount}
-            pageRangeDisplayed={Math.ceil(this.state.totalReservationsCount/10)}
-            onChange={this.handlePageChange}
-          />}
+          <Fragment>
+            <hr/>
+            <Pagination
+              activePage={this.state.activePage}
+              itemsCountPerPage={10}
+              totalItemsCount={this.state.totalReservationsCount}
+              pageRangeDisplayed={Math.ceil(this.state.totalReservationsCount/10)}
+              onChange={this.handlePageChange}
+            />
+          </Fragment>}
         { this.state.createModal &&
           <Modal isOpen={this.state.createModal} toggle={() => this.handleModal('createModal', '')}>
             <div className='reservation-form'>
-              <label>Room</label>
+              <label>Номер</label>
               <select className='form-control' value={this.state.newReservation.roomId} onChange={(e) => this.handleNewReservationChange('roomId', e.target.value)}>
                 { Object.keys(this.state.rooms).map((id, i) =>
-                  <option key={i} value={id}>Номер {this.state.rooms[id].number}</option>
+                  <option key={i} value={id}>Номер {this.state.rooms[id].number} - Кількість місць: {this.state.rooms[id].places}</option>
                 )}
               </select>
-              <label>Name</label>
+              <label>Ім'я</label>
               <input type='text' className='form-control' value={this.state.newReservation.name} onChange={(e) => this.handleNewReservationChange('name', e.target.value)} />
-              <label>Phone</label>
+              <label>Телефон</label>
               <input type='text' className='form-control' value={this.state.newReservation.phone} onChange={(e) => this.handleNewReservationChange('phone', e.target.value)} />
-              <label>Places</label>
+              <label>Кількість місць</label>
               <select className='form-control' value={this.state.newReservation.places} onChange={(e) => this.handleNewReservationChange('places', e.target.value)}>
                 { [...Array(parseInt(this.state.rooms[this.state.newReservation.roomId].places, 10))].map((e,i) =>
                   <option key={i} value={i+1}>{i+1}</option>
                 )}
               </select>
-              <label>Dates</label>
+              <label>Дати</label>
               <DateRangePicker
                 onApply={this.handleNewReservationDateChange}
                 startDate={this.state.newReservation.startDate}
@@ -280,30 +301,31 @@ export default class ReservationList extends React.Component {
                   </div>
                 </div>
               </DateRangePicker>
-              <button className='btn btn-block' onClick={this.handleSubmitReservation}>Submit</button>
+              <hr/>
+              <button className='btn btn-block reservation-btn' onClick={this.handleSubmitReservation}>Створити</button>
             </div>
           </Modal>}
         { this.state.editModal &&
           <Modal isOpen={this.state.editModal} toggle={() => this.handleModal('editModal', '')}>
             <div className='reservation-form'>
-              <i className='fa fa-trash-o' onClick={() => this.deleteReservation(this.state.selectedReservation.id)} />
-              <label>Room</label>
+              <i className='fa fa-trash-o float-right' onClick={() => this.deleteReservation(this.state.selectedReservation.id)} />
+              <label>Номер</label>
               <select className='form-control' value={this.state.selectedReservation.roomId} onChange={(e) => this.handleReservationChange('roomId', e.target.value)}>
                 { Object.keys(this.state.rooms).map((id, i) =>
-                  <option key={i} value={id}>Номер {this.state.rooms[id].number}</option>
+                  <option key={i} value={id}>Номер {this.state.rooms[id].number} - Кількість місць: {this.state.rooms[id].places}</option>
                 )}
               </select>
-              <label>Name</label>
+              <label>Ім'я</label>
               <input type='text' className='form-control' value={this.state.selectedReservation.name} onChange={(e) => this.handleReservationChange('name', e.target.value)} />
-              <label>Phone</label>
+              <label>Телефон</label>
               <input type='text' className='form-control' value={this.state.selectedReservation.phone} onChange={(e) => this.handleReservationChange('phone', e.target.value)} />
-              <label>Places</label>
+              <label>Кількість місць</label>
               <select className='form-control' value={this.state.selectedReservation.places} onChange={(e) => this.handleReservationChange('places', e.target.value)}>
                 { [...Array(parseInt(this.state.rooms[this.state.selectedReservation.roomId].places, 10))].map((e,i) =>
                   <option key={i} value={i+1}>{i+1}</option>
                 )}
               </select>
-              <label>Dates</label>
+              <label>Дати</label>
               <DateRangePicker onApply={this.handleReservationDateChange} startDate={this.state.selectedReservation.startDate} endDate={this.state.selectedReservation.endDate}>
                 <div className='row'>
                   <div className='col-lg-6'>
@@ -315,7 +337,10 @@ export default class ReservationList extends React.Component {
                 </div>
               </DateRangePicker>
             </div>
-            <button className='btn btn-block' onClick={this.handleSubmitEditReservation}>Submit</button>
+            <div>
+              <hr/>
+              <button className='btn btn-block reservation-btn' onClick={this.handleSubmitEditReservation}>Редагувати</button>
+            </div>
           </Modal>}
       </div>
     );

@@ -67,6 +67,7 @@ export default class Rooms extends React.Component {
     console.log('Rooms', this.state)
     return (
       <div className="container">
+        <h2 className='text-center'>Створення номерів в готелі</h2>
         <div className='row'>
           { Object.keys(this.state.rooms).map((i) => {
             const room = this.state.rooms[i]
@@ -74,21 +75,21 @@ export default class Rooms extends React.Component {
               return (
                 <div key={i} className="room col-lg-2">
                   <i className='fa fa-trash-o float-right' onClick={() => this.deleteRoom(i)} />
-                  <label>Number</label>
+                  <label>Номер</label>
                   <input type="number" className='form-control' value={room.number} onChange={(e) => this.handleRoomChange('number', i, e.target.value)} />
-                  <label>Floor</label>
+                  <label>Поверх</label>
                   <input type="number" className='form-control' value={room.floor} onChange={(e) => this.handleRoomChange('floor', i, e.target.value)} />
-                  <label>Places</label>
+                  <label>Кількість місць</label>
                   <input type="number" className='form-control' value={room.places} onChange={(e) => this.handleRoomChange('places', i, e.target.value)} />
                 </div>
               )}})}
         </div>
         <div className='form-group'>
-          <i className='fa fa-plus btn btn-info' onClick={this.addRoom}> Add room</i>
+          <i className='fa fa-plus btn btn-info' onClick={this.addRoom}> Додати номер</i>
         </div>
         <hr/>
         <div className='form-group'>
-          <button className='btn btn-dark' onClick={this.handleSubmit}>Submit</button>
+          <button className='btn btn-dark' onClick={this.handleSubmit}>Зберегти</button>
         </div>
       </div>
     );

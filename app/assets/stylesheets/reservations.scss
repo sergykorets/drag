@@ -1,17 +1,17 @@
 .reservations {
   .green {
-    background: darkgreen;
+    color: green;
   }
   .red {
-    background: darkred;
+    color: red;
   }
   .yellow {
-    background: yellow;
+    color: #c1911c;
   }
 }
 .reservation-form {
   padding: 20px;
-  margin: 20px;
+  margin-bottom: 20px;
   border-radius: 10px;
   border: 1px solid lightgray;
 }
@@ -30,4 +30,25 @@
 }
 .pagination .active a {
   background: white;
+}
+.reservation-list {
+  .top-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+.reservation-btn {
+  margin-top: 20px;
+  background: #818892;
+}
+.reservation-form-top {
+  margin-top: 20px;
+}
+.calendar-top {
+  display: flex;
+  align-items: center;
+  select {
+    margin-right: 20px;
+  }
 }
