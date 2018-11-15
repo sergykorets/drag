@@ -202,7 +202,8 @@ h1, h2, h3, h4, h5, h6 {
 .form-control {
   box-shadow: none!important;
   border: 1px solid #c7c7c7;
-  background: transparent;
+  border-radius: 4px;
+  background-color: #ffffff;
   font-family: $font-monsterrat;
   &:hover,
   &:focus,
@@ -250,6 +251,7 @@ h1, h2, h3, h4, h5, h6 {
     }
     .card {
       border-radius: 10px;
+      box-shadow: 0 3px 15px 0 rgba(0, 0, 0, 0.15);
       img {
         border-top-left-radius: 10px;
         border-top-right-radius: 10px;
@@ -537,6 +539,12 @@ h1, h2, h3, h4, h5, h6 {
       margin-bottom: 30px;
     }
   }
+  .top-page .form-group .price-dropdown {
+    width: 100%;
+  }
+  .whole-page {
+    margin-top: 30px;
+  }
 }
 @media (max-width: 1200px) {
   .info-block {
@@ -588,10 +596,6 @@ h1, h2, h3, h4, h5, h6 {
       height: 130px;
     }
   }
-}
-.facebook {
-  width: 100px;
-  text-align: right;
 }
 .map {
   margin-bottom: 20px;

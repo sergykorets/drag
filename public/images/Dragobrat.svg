@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="147px" height="38px" viewBox="0 0 147 38" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 48.1 (47250) - http://www.bohemiancoding.com/sketch -->
+    <title>Group 20</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <circle id="path-1" cx="15.75" cy="15.75" r="15.75"></circle>
+    </defs>
+    <g id="Dragobrat" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" transform="translate(-191.000000, -17.000000)">
+        <g id="Group-20" transform="translate(192.000000, 18.000000)">
+            <text id="dragobrat" font-family="OpenSans-Extrabold, Open Sans" font-size="16" font-weight="600" fill="#4A4A4A">
+                <tspan x="44" y="23">DRAGOBRATnet</tspan>
+            </text>
+            <g id="Group-19">
+                <g id="Group-37">
+                    <g id="Group-36" transform="translate(2.250000, 2.250000)">
+                        <mask id="mask-2" fill="white">
+                            <use xlink:href="#path-1"></use>
+                        </mask>
+                        <use id="Oval-2" fill="#1E84D7" xlink:href="#path-1"></use>
+                        <path d="M20.1670908,13.7955741 C21.0786557,12.1285247 21.9902207,11.295 22.9017857,11.295 C25.5535714,11.295 26.7425825,13.4906804 29.0892857,16.425 C31.435989,19.3593196 32.625,18.99 32.625,19.845 C32.625,20.415 32.625,20.7 32.625,20.7 L30.8571429,23.265 L27.7633929,18.99 L26.4375,19.845 L22.9537815,14.715 L17.5982143,20.7 L14.8695652,16.425 L12.1386555,18.99 L11.4107143,12.15 L6.10714286,20.7 L4.33928571,19.845 L1.32352941,22.41 L-4.5,29.25 C-1.55357143,20.13 1.09821429,15.285 3.45535714,14.715 C6.99107143,13.86 8.81092437,7.875 12.1386555,7.875 C15.4454576,7.875 15.8256617,10.4078376 20.1670908,13.7955741 Z" id="Combined-Shape" fill="#FFFFFF" mask="url(#mask-2)"></path>
+                    </g>
+                    <circle id="Oval-3" stroke="#1E84D7" cx="18" cy="18" r="18"></circle>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

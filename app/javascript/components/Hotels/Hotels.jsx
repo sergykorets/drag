@@ -3,9 +3,10 @@ import Rater from 'react-rating'
 import ReactGA from 'react-ga';
 import ReactPixel from 'react-facebook-pixel';
 import Masonry from 'react-mason';
-import { Tooltip, Modal } from 'reactstrap';
+import { Tooltip, Modal, ButtonDropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
 import Leaflet from 'leaflet';
 import { Map, Marker, Popup, TileLayer, GeoJSON } from 'react-leaflet';
+import InputRange from 'react-input-range';
 
 export default class Hotels extends React.Component {
   constructor(props) {
@@ -15,13 +16,18 @@ export default class Hotels extends React.Component {
       hotels: this.props.hotels,
       nameSearch: '',
       ratingSearch: '',
-      priceFrom: '',
-      priceTo: '',
+      dropdownOpen: false,
+      sortTypeOpen: false,
+      sortOrderOpen: false,
       sortType: '',
       sortOrder: '',
       moved: false,
       admin: this.props.admin,
-      tooltips: {}
+      tooltips: {},
+      price: {
+        min: this.props.minPrice,
+        max: this.props.maxPrice
+      },
     };
   }
 
@@ -61,145 +67,182 @@ export default class Hotels extends React.Component {
     });
   }
 
+  toggleDropdown = (type) => {
+    this.setState({
+      [type]: !this.state[type]
+    });
+  }
+
   render() {
     console.log(this.state)
     const hotels = this.state.hotels.filter(h => h.name.toLowerCase().includes(this.state.nameSearch.toLowerCase()))
       .filter(h => parseFloat(h.googleRating) >= parseFloat(this.state.ratingSearch ? this.state.ratingSearch : 0))
-      .filter(h => parseFloat(h.price ? h.price : 999999) >= parseFloat(this.state.priceFrom ? this.state.priceFrom : 0))
-      .filter(h => parseFloat(h.price ? h.price : 0) <= parseFloat(this.state.priceTo ? this.state.priceTo : 999999))
+      .filter(h => parseFloat(h.price ? h.price : 999999) >= parseFloat(this.state.price.min))
+      .filter(h => parseFloat(h.price ? h.price : 0) <= parseFloat(this.state.price.max))
     return (
-      <div className="container" onMouseMove={this._onMouseMove}>
-        <div className="top-banners">
-          <a id='left-ads' href="http://ratrak.org.ua/" target="_blank"><img src="/images/freeride.jpg" /></a>
-          <a href="/skipass"><img src="/images/november_square.jpg" /></a>
-        </div>
-        {/*<div className='introduction'>*/}
-          {/*/!*<p>Основою цього сайту є <strong><b>Google Maps API</b></strong>. Готелі, кафе, фото та відгуки до них автоматично оновлюються разом з тим, що є на Google картах. Місцезнаходження закладів*!/*/}
-            {/*/!*можна подивитися на <strong><b>3D карті</b></strong>. До кожного готелю можна подивитися заклади, які знаходяться поблизу. Готелі, які присутні на <strong><b>Booking.com</b></strong> також показуються на цьому сайті. Якщо Ваш заклад відсутній на сайті,*!/*/}
-            {/*/!*то Ви можете його створити в меню "Додати заклад" (потрібна реєстрація на сайті, яка займає 1 хвилину), або зв'язатися зі мною: sergykoretsfsp@gmail.com</p>*!/*/}
-        {/*</div>*/}
-        <hr/>
-        <div className='form-group'>
-          <div className='row'>
-            <div className='col-lg-3 filters'>
-              <input type='text' placeholder='Пошук по назві закладу' className='form-control' onChange={(e) => this.handleSearch('nameSearch', e.target.value)} value={this.state.nameSearch} />
+      <div className="whole-page" onMouseMove={this._onMouseMove}>
+        <div className='top-page'>
+          <div className='container'>
+            <div className="top-banners">
+              <a id='left-ads' href="http://ratrak.org.ua/" target="_blank"><img src="/images/freeride.jpg" /></a>
+              <a href="/skipass"><img src="/images/november_square.jpg" /></a>
             </div>
-            <div className='col-lg-3 filters'>
-              <select className='form-control' onChange={(e) => this.handleSearch('ratingSearch', e.target.value)} value={this.state.ratingSearch} >
-                <option value={0}>Пошук по рейтингу</option>
-                <option value={1}>Рейтинг вище 1</option>
-                <option value={2}>Рейтинг вище 2</option>
-                <option value={3}>Рейтинг вище 3</option>
-                <option value={3.5}>Рейтинг вище 3.5</option>
-                <option value={4}>Рейтинг вище 4</option>
-                <option value={4.5}>Рейтинг вище 4.5</option>
-              </select>
-            </div>
-            { !this.props.cafe &&
-              <div className='col-lg-3'>
-                <div className='row'>
-                  <div className='col-lg-6 filters'>
-                    <input type='number' placeholder='Ціна від' className='form-control' onChange={(e) => this.handleSearch('priceFrom', e.target.value)} value={this.state.priceFrom} />
-                  </div>
-                  <div className='col-lg-6 filters'>
-                    <input type='number' placeholder='Ціна до' className='form-control' onChange={(e) => this.handleSearch('priceTo', e.target.value)} value={this.state.priceTo} />
-                  </div>
-                </div>
-              </div>}
-            <div className='col-lg-3'>
+            {/*<div className='introduction'>*/}
+              {/*/!*<p>Основою цього сайту є <strong><b>Google Maps API</b></strong>. Готелі, кафе, фото та відгуки до них автоматично оновлюються разом з тим, що є на Google картах. Місцезнаходження закладів*!/*/}
+                {/*/!*можна подивитися на <strong><b>3D карті</b></strong>. До кожного готелю можна подивитися заклади, які знаходяться поблизу. Готелі, які присутні на <strong><b>Booking.com</b></strong> також показуються на цьому сайті. Якщо Ваш заклад відсутній на сайті,*!/*/}
+                {/*/!*то Ви можете його створити в меню "Додати заклад" (потрібна реєстрація на сайті, яка займає 1 хвилину), або зв'язатися зі мною: sergykoretsfsp@gmail.com</p>*!/*/}
+            {/*</div>*/}
+            <div className='form-group'>
               <div className='row'>
-                <div className='col-lg-6 filters'>
-                  <select className='form-control' onChange={(e) => this.handleSearch('sortType', e.target.value)} value={this.state.sortType} >
-                    <option value=''>Сортування</option>
-                    { !this.props.cafe && <option value='price'>За ціною</option>}
-                    <option value='googleRating'>За рейтингом</option>
+                <div className='col-lg-4 filters'>
+                  <div className='labels'>
+                    <label>Готель</label>
+                    <ButtonDropdown isOpen={this.state.sortTypeOpen} toggle={() => this.toggleDropdown('sortTypeOpen')}>
+                      <DropdownToggle caret>
+                        {this.state.sortType === 'googleRating' && 'За рейтингом'}
+                        {this.state.sortType === 'price' && 'За ціною'}
+                        {this.state.sortType === '' && 'Сортування'}
+                      </DropdownToggle>
+                      <DropdownMenu>
+                        <DropdownItem onClick={() => this.handleSearch('sortType', '')}>Не сортувати</DropdownItem>
+                        <DropdownItem onClick={() => this.handleSearch('sortType', 'googleRating')}>За рейтингом</DropdownItem>
+                        <DropdownItem onClick={() => this.handleSearch('sortType', 'price')}>За ціною</DropdownItem>
+                      </DropdownMenu>
+                    </ButtonDropdown>
+                    <ButtonDropdown isOpen={this.state.sortOrderOpen} toggle={() => this.toggleDropdown('sortOrderOpen')}>
+                      <DropdownToggle caret>
+                        {this.state.sortOrder === 'increasing' && 'За зростанням'}
+                        {this.state.sortOrder === 'decreasing' && 'За спаданням'}
+                        {this.state.sortOrder === '' && 'Порядок'}
+                      </DropdownToggle>
+                      <DropdownMenu>
+                        <DropdownItem onClick={() => this.handleSearch('sortOrder', '')}>Не впорядковувати</DropdownItem>
+                        <DropdownItem onClick={() => this.handleSearch('sortOrder', 'increasing')}>За зростанням</DropdownItem>
+                        <DropdownItem onClick={() => this.handleSearch('sortOrder', 'decreasing')}>За спаданням</DropdownItem>
+                      </DropdownMenu>
+                    </ButtonDropdown>
+                  </div>
+                  <input type='text' placeholder='Пошук по назві закладу' className='form-control' onChange={(e) => this.handleSearch('nameSearch', e.target.value)} value={this.state.nameSearch} />
+                </div>
+                { !this.props.cafe &&
+                <div className='col-lg-3'>
+                  <label>Ціна</label>
+                  <ButtonDropdown className='form-control' isOpen={this.state.dropdownOpen} toggle={() => this.toggleDropdown('dropdownOpen')}>
+                    <DropdownToggle color='white' caret>
+                      {`${this.state.price.min} UAH - ${this.state.price.max} UAH`}
+                    </DropdownToggle>
+                    <DropdownMenu className='price-dropdown'>
+                      <InputRange
+                        maxValue={1005}
+                        minValue={0}
+                        value={this.state.price}
+                        onChange={value => this.setState({ price: value })} />
+                    </DropdownMenu>
+                  </ButtonDropdown>
+                </div>}
+                <div className='col-lg-3 filters'>
+                  <label>Рейтинг</label>
+                  <select className='form-control' onChange={(e) => this.handleSearch('ratingSearch', e.target.value)} value={this.state.ratingSearch} >
+                    <option value={0}>Фільтр по рейтингу</option>
+                    <option value={1}>Рейтинг вище 1</option>
+                    <option value={2}>Рейтинг вище 2</option>
+                    <option value={3}>Рейтинг вище 3</option>
+                    <option value={3.5}>Рейтинг вище 3.5</option>
+                    <option value={4}>Рейтинг вище 4</option>
+                    <option value={4.5}>Рейтинг вище 4.5</option>
                   </select>
                 </div>
-                <div className='col-lg-6 filters'>
-                  <select className='form-control' onChange={(e) => this.handleSearch('sortOrder', e.target.value)} value={this.state.sortOrder} >
-                    <option value=''>Порядок</option>
-                    <option value='increasing'>Зростаючий</option>
-                    <option value='decreasing'>Спадаючий</option>
-                  </select>
+                <div className='col-lg-2'>
+                  <label>Карта</label>
+                  <button onClick={this.handleModal} className='btn map-btn'>{hotels.length} шт</button>
                 </div>
+                {/*<div className='col-lg-3'>*/}
+                  {/*<div className='row'>*/}
+                    {/*<div className='col-lg-6 filters'>*/}
+                      {/*<select className='form-control' onChange={(e) => this.handleSearch('sortType', e.target.value)} value={this.state.sortType} >*/}
+                        {/*<option value=''>Сортування</option>*/}
+                        {/*{ !this.props.cafe && <option value='price'>За ціною</option>}*/}
+                        {/*<option value='googleRating'>За рейтингом</option>*/}
+                      {/*</select>*/}
+                    {/*</div>*/}
+                    {/*<div className='col-lg-6 filters'>*/}
+                      {/*<select className='form-control' onChange={(e) => this.handleSearch('sortOrder', e.target.value)} value={this.state.sortOrder} >*/}
+                        {/*<option value=''>Порядок</option>*/}
+                        {/*<option value='increasing'>Зростаючий</option>*/}
+                        {/*<option value='decreasing'>Спадаючий</option>*/}
+                      {/*</select>*/}
+                    {/*</div>*/}
+                  {/*</div>*/}
+                {/*</div>*/}
               </div>
             </div>
           </div>
         </div>
-        <hr/>
-        <div className='map-row'>
-          <div className='facebook'>
-            <iframe src="https://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fwww.dragobrat.net&width=51&layout=box_count&action=like&size=small&show_faces=true&share=true&height=65&appId=783416265322787" width="100" height="65" style={{border:'none',overflow:'hidden'}} scrolling="no" frameBorder="0" allowtransparency="true" allow="encrypted-media"></iframe>
-          </div>
-          <button onClick={this.handleModal} className='btn-lg btn-info'>Відкрити карту ({hotels.length} шт)</button>
-          <div className='facebook'>
-            <iframe src="https://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fwww.dragobrat.net&width=51&layout=box_count&action=like&size=small&show_faces=true&share=true&height=65&appId=783416265322787" width="100" height="65" style={{border:'none',overflow:'hidden'}} scrolling="no" frameBorder="0" allowtransparency="true" allow="encrypted-media"></iframe>
-          </div>
-        </div>
-        <hr/>
-        <Masonry>
-          { hotels.sort((a, b) => (this.state.sortType && this.state.sortType === 'googleRating' ? (((this.state.sortType === 'googleRating' && this.state.sortOrder === 'increasing') ?
-              parseFloat(a.googleRating) - parseFloat(b.googleRating) : (parseFloat(b.googleRating) - parseFloat(a.googleRating)))) : parseFloat(a.position) - parseFloat(b.position)))
-            .sort((a, b) => (this.state.sortType && this.state.sortType === 'price' ? (((this.state.sortType === 'price' && this.state.sortOrder === 'increasing') ?
-              (parseFloat(a.price) - parseFloat(b.price)) : (parseFloat(b.price) - parseFloat(a.price)))) : parseFloat(a.position) - parseFloat(b.position))).map((hotel, index) => {
-              return (
-                <div key={index} className="hotel">
-                  <div className="card">
-                    <div className="card-img">
-                      { hotel.avatar &&
-                      <a href={`/hotels/${hotel.slug}`} className="image-popup fh5co-board-img"
-                         title={hotel.name}><img src={hotel.avatar || '/images/missing.jpg'} alt={hotel.name}/></a>}
-                    </div>
-                    <div className="card-body">
-                      <div className='body-top'>
-                        <a href={`/hotels/${hotel.slug}`}><h1>{hotel.name}</h1></a>
-                        { hotel.price &&
-                          <Fragment>
-                            <span>
-                              <span>{hotel.price} UAH</span>
-                              <i className="fa fa-info-circle" id={`TooltipExample${index}`}></i>
-                            </span>
-                            <Tooltip placement="bottom" isOpen={this.state.tooltips[index] && this.state.tooltips[index].price} target={`TooltipExample${index}`} toggle={() => this.toggle(index, 'price')}>
-                               Мінімальна ціна з людини за 1 ніч
-                            </Tooltip>
-                          </Fragment>}
+        <div className='container'>
+          <Masonry>
+            { hotels.sort((a, b) => (this.state.sortType && this.state.sortType === 'googleRating' ? (((this.state.sortType === 'googleRating' && this.state.sortOrder === 'increasing') ?
+                parseFloat(a.googleRating) - parseFloat(b.googleRating) : (parseFloat(b.googleRating) - parseFloat(a.googleRating)))) : parseFloat(a.position) - parseFloat(b.position)))
+              .sort((a, b) => (this.state.sortType && this.state.sortType === 'price' ? (((this.state.sortType === 'price' && this.state.sortOrder === 'increasing') ?
+                (parseFloat(a.price) - parseFloat(b.price)) : (parseFloat(b.price) - parseFloat(a.price)))) : parseFloat(a.position) - parseFloat(b.position))).map((hotel, index) => {
+                return (
+                  <div key={index} className="hotel">
+                    <div className="card">
+                      <div className="card-img">
+                        { hotel.avatar &&
+                        <a href={`/hotels/${hotel.slug}`} className="image-popup fh5co-board-img"
+                           title={hotel.name}><img src={hotel.avatar || '/images/missing.jpg'} alt={hotel.name}/></a>}
                       </div>
-                      <div className='body-bottom'>
-                        <Rater initialRating={parseFloat(hotel.googleRating)} emptySymbol="fa fa-star-o"
-                               fullSymbol="fa fa-star" readonly className='hotel-stars'/>
-                        {hotel.location && <a className='3d-link' href={hotel.location} target="_blank">3D карта</a>}
-                      </div>
-                      <div className='body-bottom'>
-                        <div className='icons'>
-                          { hotel.sauna &&
+                      <div className="card-body">
+                        <div className='body-top'>
+                          <a href={`/hotels/${hotel.slug}`}><h1>{hotel.name}</h1></a>
+                          { hotel.price &&
                             <Fragment>
-                              <img id={`Sauna-${index}`} src="/images/sauna.svg"/>
-                              <Tooltip placement="bottom" isOpen={this.state.tooltips[index] && this.state.tooltips[index].sauna} target={`Sauna-${index}`} toggle={() => this.toggle(index, 'sauna')}>
-                                Баня
+                              <span>
+                                <span>{hotel.price} UAH</span>
+                                <i className="fa fa-info-circle" id={`TooltipExample${index}`}></i>
+                              </span>
+                              <Tooltip placement="bottom" isOpen={this.state.tooltips[index] && this.state.tooltips[index].price} target={`TooltipExample${index}`} toggle={() => this.toggle(index, 'price')}>
+                                 Мінімальна ціна з людини за 1 ніч
                               </Tooltip>
                             </Fragment>}
-                          { hotel.chan &&
-                            <Fragment>
-                              <img id={`Chan-${index}`} src="/images/chan.png"/>
-                              <Tooltip placement="bottom" isOpen={this.state.tooltips[index] && this.state.tooltips[index].chan} target={`Chan-${index}`} toggle={() => this.toggle(index, 'chan')}>
-                                Чан
-                              </Tooltip>
-                            </Fragment>}
-                          { hotel.disco &&
-                            <Fragment>
-                              <img id={`Disco-${index}`} src="/images/disco.svg"/>
-                              <Tooltip placement="bottom" isOpen={this.state.tooltips[index] && this.state.tooltips[index].disco} target={`Disco-${index}`} toggle={() => this.toggle(index, 'disco')}>
-                                Дискотека
-                              </Tooltip>
-                            </Fragment>}
+                        </div>
+                        <div className='body-bottom'>
+                          <Rater initialRating={parseFloat(hotel.googleRating)} emptySymbol="fa fa-star-o"
+                                 fullSymbol="fa fa-star" readonly className='hotel-stars'/>
+                          {hotel.location && <a className='3d-link' href={hotel.location} target="_blank">3D карта</a>}
+                        </div>
+                        <div className='body-bottom'>
+                          <div className='icons'>
+                            { hotel.sauna &&
+                              <Fragment>
+                                <img id={`Sauna-${index}`} src="/images/sauna.svg"/>
+                                <Tooltip placement="bottom" isOpen={this.state.tooltips[index] && this.state.tooltips[index].sauna} target={`Sauna-${index}`} toggle={() => this.toggle(index, 'sauna')}>
+                                  Баня
+                                </Tooltip>
+                              </Fragment>}
+                            { hotel.chan &&
+                              <Fragment>
+                                <img id={`Chan-${index}`} src="/images/chan.png"/>
+                                <Tooltip placement="bottom" isOpen={this.state.tooltips[index] && this.state.tooltips[index].chan} target={`Chan-${index}`} toggle={() => this.toggle(index, 'chan')}>
+                                  Чан
+                                </Tooltip>
+                              </Fragment>}
+                            { hotel.disco &&
+                              <Fragment>
+                                <img id={`Disco-${index}`} src="/images/disco.svg"/>
+                                <Tooltip placement="bottom" isOpen={this.state.tooltips[index] && this.state.tooltips[index].disco} target={`Disco-${index}`} toggle={() => this.toggle(index, 'disco')}>
+                                  Дискотека
+                                </Tooltip>
+                              </Fragment>}
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              )
-            })}
-        </Masonry>
+                )
+              })}
+          </Masonry>
+        </div>
         { this.state.showMap &&
           <Modal isOpen={this.state.showMap} toggle={this.handleModal} size="lg">
             <Map id='full-map' center={[48.247, 24.242]} zoom={16}>

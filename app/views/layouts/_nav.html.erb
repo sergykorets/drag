@@ -1,6 +1,8 @@
 <nav class="navbar fixed-top navbar-expand-lg">
   <div class="container">
-    <b><strong><%= link_to 'DRAGOBRAT', root_path, class: 'navbar-brand' %></strong></b>
+    <%= link_to root_path, class: 'navbar-brand' do %>
+      <img src="/images/Dragobrat.svg" />
+    <% end %>
     <button class="navbar-toggler" data-target="#navbarSupportedContent" data-toggle="collapse" type="button">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -39,6 +41,9 @@
             <% end %>
           </li>
         <% end %>
+        <li class="nav-item">
+          <iframe src="https://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fwww.dragobrat.net&width=200&layout=button_count&action=like&size=small&show_faces=false&share=true&height=20&appId=783416265322787" width="200" height="20" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowTransparency="true" allow="encrypted-media"></iframe>
+        </li>
       </ul>
     </div>
   </div>

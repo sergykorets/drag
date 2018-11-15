@@ -6,7 +6,10 @@ class HotelsController < ApplicationController
   def index
     set_meta_tags title: "Драгобрат, готелі на карті 3D, ціни, відгуки, схема підйомників, веб камери"
     @admin = Rails.env.development? || (current_user && current_user.admin)
-    @hotels = Hotel.lodging.order(position: :asc).map do |hotel|
+    hotels = Hotel.lodging.order(position: :asc)
+    @max_price = hotels.pluck(:price).compact.max
+    @min_price = hotels.pluck(:price).compact.min
+    @hotels = hotels.map do |hotel|
       { id: hotel.id,
         name: hotel.name,
         price: hotel.price,
