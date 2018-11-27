@@ -16,11 +16,12 @@ export default class Room extends React.Component {
       hotelId: this.props.hotelId,
       room: this.props.room,
       rooms: this.props.rooms,
+      selectedMonth: new Date,
       selectedReservation: {},
       newReservation: {
         name: '',
         phone: '',
-        places: 1,
+        places: this.props.room.places,
         startDate: moment(new Date).format('DD.MM.YYYY'),
         endDate: moment(new Date).add(1, 'days').format('DD.MM.YYYY'),
         roomId: Object.keys(this.props.rooms)[0]
@@ -71,6 +72,7 @@ export default class Room extends React.Component {
           date: this.state.selectedMonth
         }
       }).then((resp) => {
+        NotificationManager.success('Бронювання видалено');
         this.setState({
           ...this.state,
           editModal: false,
@@ -93,12 +95,14 @@ export default class Room extends React.Component {
           name: this.state.selectedReservation.title,
           phone: this.state.selectedReservation.phone,
           places: this.state.selectedReservation.places,
+          description: this.state.selectedReservation.description,
           start_date: this.state.selectedReservation.start instanceof moment ? this.state.selectedReservation.start.format('DD.MM.YYYY') : this.state.selectedReservation.start,
           end_date: this.state.selectedReservation.end instanceof moment ? this.state.selectedReservation.end.format('DD.MM.YYYY') : this.state.selectedReservation.end
         }
       }
     }).then((resp) => {
       if (resp.success) {
+        NotificationManager.success('Бронювання оновлено');
         this.setState({
           ...this.state,
           editModal: false,
@@ -141,7 +145,8 @@ export default class Room extends React.Component {
       type: 'GET',
       dataType: 'JSON',
       data: {
-        id: id
+        id: id,
+        date: this.state.selectedMonth
       },
       success: (resp) => {
         this.setState({
@@ -184,12 +189,15 @@ export default class Room extends React.Component {
           name: this.state.newReservation.name,
           phone: this.state.newReservation.phone,
           places: this.state.newReservation.places,
+          status: 'approved',
+          description: this.state.newReservation.description,
           start_date: this.state.newReservation.startDate,
           end_date: this.state.newReservation.endDate
         }
       }
     }).then((resp) => {
       if (resp.success) {
+        NotificationManager.success('Бронювання створено');
         this.setState({
           ...this.state,
           room: {
@@ -199,7 +207,7 @@ export default class Room extends React.Component {
           newReservation: {
             name: '',
             phone: '',
-            places: 1,
+            places: this.props.room.places,
             startDate: moment(new Date).format('DD.MM.YYYY'),
             endDate: moment(new Date).add(1, 'days').format('DD.MM.YYYY'),
             roomId: Object.keys(this.state.rooms)[0]
@@ -222,7 +230,7 @@ export default class Room extends React.Component {
         <div className='calendar-top'>
           <select className='form-control' value={this.state.room.id} onChange={(e) => this.handleRoomChange(e.target.value)}>
             { Object.keys(this.state.rooms).map((id, i) =>
-              <option key={i} value={id}>Номер {this.state.rooms[id].number} - Кількість місць: {this.state.rooms[id].places}</option>
+              <option key={i} value={id}>Поверх {this.state.rooms[id].floor} | Номер {this.state.rooms[id].number} | Місць: {this.state.rooms[id].places} { this.state.rooms[id].bigBed && '| Двоспальне ліжко'}</option>
             )}
           </select>
           <button className='btn btn-info' onClick={() => this.handleModal('createModal')}><i className='fa fa-plus' /> Створити нове бронювання</button>
@@ -245,6 +253,9 @@ export default class Room extends React.Component {
         <hr/>
         { this.state.createModal &&
           <Modal isOpen={this.state.createModal} toggle={() => this.handleModal('createModal')}>
+            <ModalHeader className='text-center' toggle={() => this.handleModal('createModal')}>
+              <h4>Створення нового бронювання</h4>
+            </ModalHeader>
             <div className='reservation-form'>
               <div className='form-group'>
                 <label>Ім'я</label>
@@ -263,21 +274,29 @@ export default class Room extends React.Component {
                 </select>
               </div>
               <div className='form-group'>
+                <label>Додаткова інформація</label>
+                <textarea type='text' className='form-control' value={this.state.newReservation.description} onChange={(e) => this.handleNewReservationChange('description', e.target.value)} />
+              </div>
+              <div className='form-group'>
                 <DateRangePicker
+                  autoApply
                   onApply={this.handleNewReservationDateChange}
                   startDate={this.state.newReservation.startDate}
                   endDate={this.state.newReservation.endDate}>
                   <label>Дати</label>
-                  <input type="text" className='form-control' value={`${this.state.newReservation.startDate} - ${this.state.newReservation.endDate}`}/>
+                  <input readOnly type="text" className='form-control' value={`${this.state.newReservation.startDate} - ${this.state.newReservation.endDate}`}/>
                 </DateRangePicker>
               </div>
-              <div className='form-group'>
-                <button className='btn btn-block reservation-btn' onClick={this.handleSubmitReservation}>Створити</button>
-              </div>
             </div>
+            <ModalFooter>
+              <button className='btn btn-block reservation-btn' onClick={this.handleSubmitReservation}>Створити</button>
+            </ModalFooter>
           </Modal>}
         { this.state.editModal &&
           <Modal isOpen={this.state.editModal} toggle={() => this.handleModal('editModal')}>
+            <ModalHeader className='text-center' toggle={() => this.handleModal('editModal')}>
+              <h4>Редагування бронювання</h4>
+            </ModalHeader>
             <div className='reservation-form'>
               <div className='form-group'>
                 <i className='fa fa-trash-o float-right' onClick={this.deleteReservation} />
@@ -297,15 +316,19 @@ export default class Room extends React.Component {
                 </select>
               </div>
               <div className='form-group'>
-                <DateRangePicker onApply={this.handleDateChange} startDate={moment(this.state.selectedReservation.start).format('DD.MM.YYYY')} endDate={moment(this.state.selectedReservation.end).format('DD.MM.YYYY')}>
+                <label>Додаткова інформація</label>
+                <textarea type='text' className='form-control' value={this.state.selectedReservation.description} onChange={(e) => this.handleReservationChange('description', e.target.value)} />
+              </div>
+              <div className='form-group'>
+                <DateRangePicker autoApply onApply={this.handleDateChange} startDate={moment(this.state.selectedReservation.start).format('DD.MM.YYYY')} endDate={moment(this.state.selectedReservation.end).format('DD.MM.YYYY')}>
                   <label>Дати</label>
-                  <input type="text" className='form-control' value={`${moment(this.state.selectedReservation.start).format('DD.MM.YYYY')} - ${moment(this.state.selectedReservation.end).format('DD.MM.YYYY')}`}/>
+                  <input readOnly type="text" className='form-control' value={`${moment(this.state.selectedReservation.start).format('DD.MM.YYYY')} - ${moment(this.state.selectedReservation.end).format('DD.MM.YYYY')}`}/>
                 </DateRangePicker>
               </div>
             </div>
-            <div className='form-group'>
+            <ModalFooter>
               <button className='btn btn-block reservation-btn' onClick={this.handleSubmitEditReservation}>Редагувати</button>
-            </div>
+            </ModalFooter>
           </Modal>}
       </div>
     );

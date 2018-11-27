@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181113173143) do
+ActiveRecord::Schema.define(version: 20181124140350) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -73,6 +73,8 @@ ActiveRecord::Schema.define(version: 20181113173143) do
     t.boolean "sauna", default: false
     t.boolean "chan", default: false
     t.boolean "disco", default: false
+    t.boolean "allow_booking", default: false
+    t.boolean "auto_booking", default: false
     t.index ["user_id"], name: "index_hotels_on_user_id"
   end
 
@@ -116,6 +118,9 @@ ActiveRecord::Schema.define(version: 20181113173143) do
     t.integer "places"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "status", default: 0
+    t.text "description"
+    t.integer "deposit"
     t.index ["hotel_id"], name: "index_reservations_on_hotel_id"
     t.index ["room_id"], name: "index_reservations_on_room_id"
     t.index ["user_id"], name: "index_reservations_on_user_id"
@@ -137,6 +142,7 @@ ActiveRecord::Schema.define(version: 20181113173143) do
     t.integer "places"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "big_bed", default: false
     t.index ["hotel_id"], name: "index_rooms_on_hotel_id"
   end
 

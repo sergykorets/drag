@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+</head>
+<body>
+<% if @auto_booked %>
+  <p>
+    Номер <%= @room.number %> у Вашому готелі <%= @room.hotel.name %> було заброньовано на дати
+    від <%= @reservation.start_date.strftime('%d.%m.%Y') %> по <%= @reservation.end_date.strftime('%d.%m.%Y') %>.
+  </p>
+  <p>Для уточнення інформації зв'яжіться з людиною, яка забронювала цей номер</p>
+  <h2>Інформація бронювання</h2>
+  <p>Ім'я: <%= @reservation.name %></p>
+  <p>Телефон: <%= @reservation.phone %></p>
+  <% if @reservation.description %>
+    <p>Додаткова інформація: <%= @reservation.description %></p>
+  <% end %>
+<% else %>
+  <p>
+    <%= @reservation.name %> чекає на Вашу відповідь щодо бронювання номеру <%= @room.number %> у Вашому готелі
+    на дати від <%= @reservation.start_date.strftime('%d.%m.%Y') %> по <%= @reservation.end_date.strftime('%d.%m.%Y') %>.
+  </p>
+  <p>Для підтвердження або скасування бронювання зайдіть у Ваш кабінет на сайті - <%= link_to 'Зайти в кабінет', pending_reservations_hotel_rooms_url(@room.hotel.slug) %></p>
+<% end %>
+<hr />
+<footer><a href="http://www.dragobrat.net">www.dragobrat.net</a></footer>
+</body>
+</html>

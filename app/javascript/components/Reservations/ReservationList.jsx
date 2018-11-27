@@ -55,8 +55,13 @@ export default class ReservationList extends React.Component {
 
   handleModal = (modal, id) => {
     this.setState({
+      ...this.state,
       [modal]: !this.state[modal],
-      selectedReservation: this.state.reservations[id]
+      selectedReservation: this.state.reservations[id],
+      newReservation: {
+        ...this.state.newReservation,
+        places: modal === 'createModal' ? this.state.rooms[this.state.newReservation.roomId].places : this.state.newReservation.places
+      }
     });
   }
 
@@ -86,7 +91,8 @@ export default class ReservationList extends React.Component {
       ...this.state,
       newReservation: {
         ...this.state.newReservation,
-        [field]: value
+        [field]: value,
+        places: field === 'roomId' ? this.state.rooms[value].places : this.state.newReservation.places
       }
     })
   }
@@ -110,17 +116,20 @@ export default class ReservationList extends React.Component {
         from_list: true,
         start_date: this.state.startDate,
         end_date: this.state.endDate,
+        page: this.state.activePage,
         reservation: {
           room_id: this.state.selectedReservation.roomId,
           name: this.state.selectedReservation.name,
           phone: this.state.selectedReservation.phone,
           places: this.state.selectedReservation.places,
+          deposit: this.state.selectedReservation.deposit,
           start_date: this.state.selectedReservation.startDate,
           end_date: this.state.selectedReservation.endDate
         }
       }
     }).then((resp) => {
       if (resp.success) {
+        NotificationManager.success('Бронювання оновлено');
         this.setState({reservations: resp.reservations, editModal: false})
       } else {
         NotificationManager.error(resp.error, 'Неможливо створити');
@@ -139,6 +148,7 @@ export default class ReservationList extends React.Component {
           end_date: this.state.endDate
         }
       }).then((resp) => {
+        NotificationManager.success('Бронювання видалено');
         this.setState({reservations: resp.reservations, editModal: false})
       });
     }
@@ -172,6 +182,8 @@ export default class ReservationList extends React.Component {
           room_id: this.state.newReservation.roomId,
           name: this.state.newReservation.name,
           phone: this.state.newReservation.phone,
+          description: this.state.newReservation.description,
+          status: 'approved',
           places: this.state.newReservation.places,
           start_date: this.state.newReservation.startDate,
           end_date: this.state.newReservation.endDate
@@ -179,6 +191,7 @@ export default class ReservationList extends React.Component {
       }
     }).then((resp) => {
       if (resp.success) {
+        NotificationManager.success('Бронювання створено');
         this.setState({
           ...this.state,
           reservations: resp.reservations,
@@ -205,14 +218,14 @@ export default class ReservationList extends React.Component {
         <h3 className='text-center'>Список бронювань на вибрані дати</h3>
         <div className='row'>
           <div className='col-lg-6'>
-            <DateRangePicker onApply={this.handleDateChange} startDate={this.state.startDate} endDate={this.state.endDate}>
+            <DateRangePicker autoApply onApply={this.handleDateChange} startDate={this.state.startDate} endDate={this.state.endDate}>
               <label>Діапазон дат</label>
-              <input type="text" className='form-control' value={`${this.state.startDate} - ${this.state.endDate}`}/>
+              <input readOnly type="text" className='form-control' value={`${this.state.startDate} - ${this.state.endDate}`}/>
             </DateRangePicker>
           </div>
-          <div className='col-lg-6'>
-            <button className='btn btn-info float-right add-reservation' onClick={() => this.handleModal('createModal', '')}><i className='fa fa-plus' /> Створити нове бронювання</button>
-          </div>
+          {/*<div className='col-lg-6'>*/}
+            {/*<button className='btn btn-info float-right add-reservation' onClick={() => this.handleModal('createModal', '')}><i className='fa fa-plus' /> Створити нове бронювання</button>*/}
+          {/*</div>*/}
         </div>
         <hr/>
         { this.state.totalReservationsCount > 10 &&
@@ -229,7 +242,7 @@ export default class ReservationList extends React.Component {
         <table className='table reservation'>
           <thead>
           <tr>
-            { ['Номер', 'Гість', 'Телефон', 'К-ть місць', 'Заїзд', 'Виїзд', 'Дії'].map((field, index) => {
+            { ['Номер', 'Гість', 'Телефон', 'К-ть місць', 'Заїзд', 'Виїзд', 'Примітка', 'Завдаток', 'Дії'].map((field, index) => {
               return (
                 <th key={index}>
                   {field}
@@ -238,16 +251,18 @@ export default class ReservationList extends React.Component {
           </tr>
           </thead>
           <tbody>
-            { Object.keys(this.state.reservations).map((r, i) => {
+            { Object.keys(this.state.reservations).sort((a, b) => b - a).map((r, i) => {
               const reservation = this.state.reservations[r]
               return (
                 <tr key={i}>
                   <td><a href={`/hotels/${this.state.hotelId}/rooms/calendar?id=${reservation.roomId}`}>{reservation.room}</a></td>
                   <td>{reservation.name}</td>
-                  <td>{reservation.phone}</td>
+                  <td><a href={`tel:${reservation.phone}`}>{reservation.phone}</a></td>
                   <td>{reservation.places}</td>
                   <td>{reservation.startDate}</td>
                   <td>{reservation.endDate}</td>
+                  <td>{reservation.description}</td>
+                  <td className={reservation.deposit ? 'green' : 'red'}>{reservation.deposit ? reservation.deposit : 'Немає'}</td>
                   <td><i className='fa fa-pencil' onClick={() => this.handleModal('editModal', r)}/></td>
                 </tr>
             )})}
@@ -266,12 +281,15 @@ export default class ReservationList extends React.Component {
           </Fragment>}
         { this.state.createModal &&
           <Modal isOpen={this.state.createModal} toggle={() => this.handleModal('createModal', '')}>
+            <ModalHeader className='text-center' toggle={() => this.handleModal('createModal', '')}>
+              <h5>Створення нового бронювання</h5>
+            </ModalHeader>
             <div className='reservation-form'>
               <div className='form-group'>
                 <label>Номер</label>
                 <select className='form-control' value={this.state.newReservation.roomId} onChange={(e) => this.handleNewReservationChange('roomId', e.target.value)}>
                   { Object.keys(this.state.rooms).map((id, i) =>
-                    <option key={i} value={id}>Номер {this.state.rooms[id].number} - Кількість місць: {this.state.rooms[id].places}</option>
+                    <option key={i} value={id}>Поверх {this.state.rooms[id].floor} | Номер {this.state.rooms[id].number} | Місць: {this.state.rooms[id].places} { this.state.rooms[id].bigBed && '| Двоспальне ліжко'}</option>
                   )}
                 </select>
               </div>
@@ -292,26 +310,36 @@ export default class ReservationList extends React.Component {
                 </select>
               </div>
               <div className='form-group'>
+                <label>Додаткова інформація</label>
+                <textarea type='text' className='form-control' value={this.state.newReservation.description} onChange={(e) => this.handleNewReservationChange('description', e.target.value)} />
+              </div>
+              <div className='form-group'>
                 <DateRangePicker
+                  autoApply
                   onApply={this.handleNewReservationDateChange}
                   startDate={this.state.newReservation.startDate}
                   endDate={this.state.newReservation.endDate}>
                   <label>Дати</label>
-                  <input type="text" className='form-control' value={`${this.state.newReservation.startDate} - ${this.state.newReservation.endDate}`}/>
+                  <input readOnly type="text" className='form-control' value={`${this.state.newReservation.startDate} - ${this.state.newReservation.endDate}`}/>
                 </DateRangePicker>
               </div>
-              <button className='btn btn-block reservation-btn' onClick={this.handleSubmitReservation}>Створити</button>
             </div>
+            <ModalFooter>
+              <button className='btn btn-block reservation-btn' onClick={this.handleSubmitReservation}>Створити</button>
+            </ModalFooter>
           </Modal>}
         { this.state.editModal &&
           <Modal isOpen={this.state.editModal} toggle={() => this.handleModal('editModal', '')}>
+            <ModalHeader className='text-center' toggle={() => this.handleModal('editModal', '')}>
+              <h5>Редагування бронювання</h5>
+            </ModalHeader>
             <div className='reservation-form'>
               <div className='form-group'>
                 <i className='fa fa-trash-o float-right' onClick={() => this.deleteReservation(this.state.selectedReservation.id)} />
                 <label>Номер</label>
                 <select className='form-control' value={this.state.selectedReservation.roomId} onChange={(e) => this.handleReservationChange('roomId', e.target.value)}>
                   { Object.keys(this.state.rooms).map((id, i) =>
-                    <option key={i} value={id}>Номер {this.state.rooms[id].number} - Кількість місць: {this.state.rooms[id].places}</option>
+                    <option key={i} value={id}>Поверх {this.state.rooms[id].floor} | Номер {this.state.rooms[id].number} | Місць: {this.state.rooms[id].places} { this.state.rooms[id].bigBed && '| Двоспальне ліжко'}</option>
                   )}
                 </select>
               </div>
@@ -332,15 +360,23 @@ export default class ReservationList extends React.Component {
                 </select>
               </div>
               <div className='form-group'>
-                <DateRangePicker onApply={this.handleReservationDateChange} startDate={this.state.selectedReservation.startDate} endDate={this.state.selectedReservation.endDate}>
+                <label>Додаткова інформація</label>
+                <textarea type='text' className='form-control' value={this.state.selectedReservation.description} onChange={(e) => this.handleReservationChange('description', e.target.value)} />
+              </div>
+              <div className='form-group'>
+                <label>Завдаток</label>
+                <input type='number' className='form-control' value={this.state.selectedReservation.deposit} onChange={(e) => this.handleReservationChange('deposit', e.target.value)} />
+              </div>
+              <div className='form-group'>
+                <DateRangePicker autoApply onApply={this.handleReservationDateChange} startDate={this.state.selectedReservation.startDate} endDate={this.state.selectedReservation.endDate}>
                   <label>Дати</label>
-                  <input type="text" className='form-control' value={`${this.state.selectedReservation.startDate} - ${this.state.selectedReservation.endDate}`}/>
+                  <input readOnly type="text" className='form-control' value={`${this.state.selectedReservation.startDate} - ${this.state.selectedReservation.endDate}`}/>
                 </DateRangePicker>
               </div>
             </div>
-            <div className='form-group'>
+            <ModalFooter>
               <button className='btn btn-block reservation-btn' onClick={this.handleSubmitEditReservation}>Редагувати</button>
-            </div>
+            </ModalFooter>
           </Modal>}
       </div>
     );

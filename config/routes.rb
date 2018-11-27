@@ -9,13 +9,19 @@ Rails.application.routes.draw do
   resources :hotels do
     resources :reviews, only: [:create, :destroy]
     resources :rooms do
-      get :calendar, on: :collection
-      get :reservation_list, on: :collection
+      collection do
+        get :pending_reservations
+        get :calendar
+        get :reservation_list
+      end
     end
     resources :reservations do
       get :dates, on: :collection
     end
-    get :reservation_list, on: :member
+    member do
+      get :booked_dates
+      get :get_available_rooms
+    end
   end
   resources :restaurants, only: :index
   resources :suggests, only: :create
@@ -24,4 +30,5 @@ Rails.application.routes.draw do
   get '/sitemap.xml.gz', to: redirect("https://#{ENV['S3_BUCKET_NAME']}.s3.amazonaws.com/sitemaps/sitemap.xml.gz", status: 301)
   get '/schema', to: 'schemas#index'
   get '/skipass', to: 'schemas#skipass'
+  get '/reservations', to: 'reservations#user_reservations'
 end

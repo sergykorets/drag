@@ -17,12 +17,13 @@
       color: #c1911c;
     }
   }
+  .btn {
+    margin-right: 15px;
+  }
 }
 .reservation-form {
   padding: 20px;
-  margin-bottom: 20px;
-  border-radius: 10px;
-  border: 1px solid lightgray;
+  border-top: 1px solid lightgrey;
 }
 .pagination a:first-child {
   border-top-left-radius: 5px;
@@ -42,7 +43,6 @@
 }
 .reservation-btn {
   margin-top: 20px;
-  background: #818892;
 }
 .reservation-form-top {
   margin-top: 20px;
@@ -58,7 +58,31 @@
   thead th {
     color: #4a4a4a;
   }
+  .fa-check, .green {
+    color: darkgreen;
+  }
+  .fa-times, .red {
+    color: darkred;
+  }
   i {
     color: #1e84d7;
+    margin-right: 15px;
+  }
+}
+.DateRangePicker {
+  width: 100%;
+  border-radius: 4px;
+  text-align: center;
+  .DateRangePickerInput {
+    width: 100%;
+    border-radius: 4px;
+    .DateInput {
+      width: 47%;
+      border-radius: 4px;
+      .DateInput_input {
+        border-radius: 4px;
+        text-align: center;
+      }
+    }
   }
 }

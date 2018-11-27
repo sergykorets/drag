@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+</head>
+<body>
+  <p>
+    Ваше бронювання готеля <%= @room.hotel.name %> (Номер <%= @room.number %>) на дати
+    від <%= @reservation.start_date.strftime('%d.%m.%Y') %> по <%= @reservation.end_date.strftime('%d.%m.%Y') %> було
+    видалено адміністратором. Зв'яжіться з готелем для уточнення інформації.
+  </p>
+</body>
+<footer><a href="http://www.dragobrat.net">www.dragobrat.net</a></footer>
+</html>

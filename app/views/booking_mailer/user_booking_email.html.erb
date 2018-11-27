@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+</head>
+<body>
+<% if @auto_booked %>
+  <p>
+    Ви успішно забронювали номер <%= @room.number %> в готелі <%= @room.hotel.name %> на дати
+    від <%= @reservation.start_date.strftime('%d.%m.%Y') %> по <%= @reservation.end_date.strftime('%d.%m.%Y') %>
+  </p>
+  <p>З Вами невдовзі зв'яжеться адміністратор готелю для уточнення деталей бронювання.</p>
+<% else %>
+  <p>
+    Запит на бронювання готеля <%= @room.hotel.name %> на дати
+    від <%= @reservation.start_date.strftime('%d.%m.%Y') %> по <%= @reservation.end_date.strftime('%d.%m.%Y') %> надіслано.
+  </p>
+  <p>
+    Ми надішлемо Вам лист, як тільки адміністратор готелю відповість на Ваш запит.
+    Ви також можете зателефонувати в готель та повідомити, що Ви надіслали запит на бронювання на сайті
+  </p>
+<% end %>
+</body>
+<footer><a href="http://www.dragobrat.net">www.dragobrat.net</a></footer>
+</html>

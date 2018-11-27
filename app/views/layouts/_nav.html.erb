@@ -16,12 +16,12 @@
       </ul>
       <ul class="navbar-nav ml-auto">
         <% if user_signed_in? %>
-          <li class='nav-item'><%= link_to 'Додати заклад', new_hotel_path, class: 'nav-link' %></li>
-          <% if !current_user.name.blank? %>
-            <li class='nav-item'><%= link_to current_user.name, edit_user_registration_path, class: 'nav-link' %></li>
+          <% if current_user.reservations.count > 0 %>
+            <li class='nav-item'><%= link_to 'Бронюванння', reservations_path, class: 'nav-link' %></li>
           <% else %>
-            <li class="nav-item"><%= link_to 'Редагувати профіль', edit_user_registration_path, class: 'nav-link' %></li>
+            <li class='nav-item'><%= link_to 'Додати заклад', new_hotel_path, class: 'nav-link' %></li>
           <% end %>
+          <li class="nav-item"><%= link_to 'Профіль', edit_user_registration_path, class: 'nav-link' %></li>
           <li class="round-image-30"><%= image_tag(user_avatar(current_user)) %></li>
           <li class="nav-item"><%= link_to 'Вийти', destroy_user_session_path, data: {:confirm => "Вийти?"}, class: 'nav-link' %></li>
           </li>

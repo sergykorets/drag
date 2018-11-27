@@ -12,6 +12,7 @@ class Hotel < ApplicationRecord
   has_many :nearby_hotels
   has_many :rooms
   has_many :reservations
+  belongs_to :user, optional: true
 
   validates_presence_of :name
   validates_uniqueness_of :google_id, allow_blank: true, allow_nil: true

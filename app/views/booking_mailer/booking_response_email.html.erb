@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+</head>
+<body>
+<% if @approved %>
+  <p>
+    Ваш запит на бронювання готеля <%= @room.hotel.name %> (Номер <%= @room.number %>) на дати
+    від <%= @reservation.start_date.strftime('%d.%m.%Y') %> по <%= @reservation.end_date.strftime('%d.%m.%Y') %> було
+    підтверджено адміністратором. Можете пакувати сумки :)
+  </p>
+<% else %>
+  <p>
+    Ваш запит на бронювання готеля <%= @room.hotel.name %> на дати
+    від <%= @reservation.start_date.strftime('%d.%m.%Y') %> по <%= @reservation.end_date.strftime('%d.%m.%Y') %> було
+    відхилено адміністратором готеля. Можете зв'язатися з адміністратором та дізнатися причину відмови.
+  </p>
+<% end %>
+</body>
+<footer><a href="http://www.dragobrat.net">www.dragobrat.net</a></footer>
+</html>

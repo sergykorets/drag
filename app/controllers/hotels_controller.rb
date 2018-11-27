@@ -1,5 +1,5 @@
 class HotelsController < ApplicationController
-  before_action :set_hotel, only: [:show, :edit, :update, :nearby, :rooms, :reservation_list]
+  before_action :set_hotel, only: [:show, :edit, :update, :nearby, :rooms, :reservation_list, :booked_dates, :get_available_rooms]
   before_action :check_session, only: :index
   before_action :authenticate_user!, only: [:create, :edit, :update]
 
@@ -19,6 +19,7 @@ class HotelsController < ApplicationController
         sauna: hotel.sauna,
         chan: hotel.chan,
         disco: hotel.disco,
+        allowBooking: hotel.allow_booking,
         lng: hotel.longitude,
         googleRating: hotel.average_rating,
         location: hotel.location,
@@ -45,6 +46,7 @@ class HotelsController < ApplicationController
         sauna: nearby_hotel.sauna,
         chan: nearby_hotel.chan,
         disco: nearby_hotel.disco,
+        allowBooking: nearby_hotel.allow_booking,
         googleRating: nearby_hotel.average_rating,
         location: nearby_hotel.location,
         type: nearby_hotel.hotel_type,
@@ -65,6 +67,8 @@ class HotelsController < ApplicationController
       sauna: @hotel.sauna,
       chan: @hotel.chan,
       disco: @hotel.disco,
+      allowBooking: @hotel.allow_booking,
+      autoBooking: @hotel.auto_booking,
       hotelType: @hotel.hotel_type,
       googleRating: @hotel.average_rating,
       location: @hotel.location,
@@ -130,6 +134,31 @@ class HotelsController < ApplicationController
     end
   end
 
+  def booked_dates
+    blocked_dates = []
+    hotel_places = @hotel.rooms.count
+    date = params[:date] ? params[:date].to_date : Date.today
+    (date.beginning_of_month..date.end_of_month).each do |day|
+      reserved = @hotel.reservations.approved.where('start_date < ? AND end_date > ?', day.tomorrow, day).map {|r| r.room_id}.uniq.count
+      blocked_dates << day if reserved >= hotel_places
+    end
+    render json: {success: true, blockedDates: blocked_dates }
+  end
+
+  def get_available_rooms
+    hotel_rooms = @hotel.rooms.to_a
+    reservations = @hotel.reservations.approved.where('start_date < ? AND end_date > ?', params[:end_date], params[:start_date])
+    reserved_rooms = reservations.map {|r| Room.find_by_id(r.room_id)}.uniq.to_a
+    available_rooms = (hotel_rooms - reserved_rooms).map do |room|
+      { id: room.id,
+        floor: room.floor,
+        bigBed: room.big_bed,
+        places: room.places,
+        number: room.number}
+    end
+    render json: {success: true, availableRooms: available_rooms }
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_hotel
@@ -139,7 +168,8 @@ class HotelsController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def hotel_params
       params.require(:hotel).permit(:name, :description, :hotel_type, :site, :main_photo_id, :main_photo_type, :price, :sauna, :chan, :disco,
-                                    rooms_attributes: [:id, :number, :floor, :places, :_destroy], phones_attributes: [:id, :phone, :_destroy],
+                                    :allow_booking, :auto_booking,
+                                    rooms_attributes: [:id, :number, :floor, :big_bed, :places, :_destroy], phones_attributes: [:id, :phone, :_destroy],
                                     google_photos_attributes: [:id, :deleted], photos_attributes: [:id, :_destroy, photo: [:picture]])
     end
 

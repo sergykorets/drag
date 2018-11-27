@@ -1,0 +1,43 @@
+yarn add v1.9.2
+[1/4] Resolving packages...
+[2/4] Fetching packages...
+[3/4] Linking dependencies...
+[4/4] Building fresh packages...
+success Saved lockfile.
+success Saved 30 new dependencies.
+info Direct dependencies
+├─ react-dates@18.2.2
+├─ react-dom@16.6.3
+└─ react@16.6.3
+info All dependencies
+├─ array.prototype.find@2.0.4
+├─ array.prototype.flat@1.2.1
+├─ brcast@2.0.2
+├─ deepmerge@1.5.2
+├─ direction@1.0.2
+├─ encoding@0.1.12
+├─ fbjs@0.8.17
+├─ function.prototype.name@1.1.0
+├─ global-cache@1.2.1
+├─ has-symbols@1.0.0
+├─ hoist-non-react-statics@2.5.5
+├─ is-touch-device@1.0.1
+├─ isomorphic-fetch@2.2.1
+├─ node-fetch@1.7.3
+├─ object-is@1.0.1
+├─ object.entries@1.0.4
+├─ promise@7.3.1
+├─ prop-types-exact@1.2.0
+├─ react-addons-shallow-compare@15.6.2
+├─ react-dates@18.2.2
+├─ react-dom@16.6.3
+├─ react-moment-proptypes@1.6.0
+├─ react-outside-click-handler@1.2.2
+├─ react-portal@4.1.5
+├─ react-with-styles-interface-css@4.0.3
+├─ react-with-styles@3.2.1
+├─ react@16.6.3
+├─ reflect.ownkeys@0.2.0
+├─ ua-parser-js@0.7.19
+└─ whatwg-fetch@3.0.0
+Done in 11.15s.

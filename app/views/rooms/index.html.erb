@@ -1,1 +1,2 @@
-<%= react_component("Rooms", props: {hotelId: @hotel_id, rooms: @rooms, admin: @admin, flash: params[:reason]}) %>
+<%= react_component("Rooms",
+  props: {hotelId: @hotel_id, rooms: @rooms, admin: @admin, flash: params[:reason], allowBooking: @hotel.allow_booking, autoBooking: @hotel.auto_booking}) %>

@@ -376,15 +376,6 @@ h1, h2, h3, h4, h5, h6 {
     align-items: center;
     justify-content: space-between;
   }
-  .custom-checkbox {
-    display: flex;
-    align-items: center;
-    justify-content: left;
-    margin-right: 10px;
-    input {
-      margin-right: 10px;
-    }
-  }
   .photo-save {
     margin-top: 30px;
   }
@@ -411,10 +402,15 @@ h1, h2, h3, h4, h5, h6 {
 .image-gallery-slide {
   background: none !important;
 }
-//.image-gallery-slides {
-//  border: 1px dashed #e2e2e2;
-//  border-radius: 10px;
-//}
+.custom-checkbox {
+  display: flex;
+  align-items: center;
+  justify-content: left;
+  margin-right: 10px;
+  input {
+    margin-right: 10px;
+  }
+}
 .image-gallery-thumbnails-wrapper {
  border-top: #81889233 1px solid;
   margin-top: 20px;
@@ -574,6 +570,24 @@ h1, h2, h3, h4, h5, h6 {
   .top-page .container .map-btn {
     font-size: 22px;
   }
+  .CalendarDay__default {
+    padding: 20px;
+    font-size: 22px;
+  }
+  .DateRangePicker_picker, .DayPicker_transitionContainer, .DayPicker, .DayPicker_focusRegion {
+    width: 510px !important;
+    height: 525px !important;
+  }
+  .DayPicker_weekHeader {
+    width: 510px !important;
+    li {
+      width: 66px !important;
+    }
+  }
+  .CalendarMonth_caption {
+    margin-bottom: 25px;
+    font-size: 22px;
+  }
 }
 @media (max-width: 1200px) {
   .info-block {
@@ -587,6 +601,9 @@ h1, h2, h3, h4, h5, h6 {
   }
   .masonry-grid .grid-item {
     width: 49.9%;
+  }
+  .hotel-buttons .btn {
+    margin-right: 15px;
   }
 }
 @media (min-width: 1201px) {
@@ -670,4 +687,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 .top-page .btn-group .input-range__label--value {
   display: none;
+}
+.red {
+  color: darkred;
 }

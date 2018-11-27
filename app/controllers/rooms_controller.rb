@@ -1,7 +1,8 @@
 class RoomsController < ApplicationController
   layout 'hotel_admin'
+  before_action :authenticate_user!
   before_action :define_hotel
-  before_action :check_rooms, only: [:calendar, :reservation_list]
+  before_action :check_rooms, only: [:calendar, :reservation_list, :pending_reservations]
 
   def index
     @hotel_id = @hotel.id
@@ -9,7 +10,8 @@ class RoomsController < ApplicationController
       id: g.id,
       number: g.number,
       floor: g.floor,
-      places: g.places}
+      places: g.places,
+      big_bed: g.big_bed}
     }
   end
 
@@ -18,18 +20,22 @@ class RoomsController < ApplicationController
     @room = @hotel.rooms.find_by_id(params[:id]) || @hotel.rooms.first
     @rooms = @hotel.rooms.each_with_object({}) {|room, hash| hash[room.id] = {
       number: room.number,
-      places: room.places
+      places: room.places,
+      floor: room.floor,
+      bigBed: room.big_bed
     }}
     @room = {
       id: @room.id,
       number: @room.number,
       floor: @room.floor,
       places: @room.places,
-      reservations: @room.reservations.for_dates(@room, params[:date].try(:to_date).try(:at_beginning_of_month) || Date.today.at_beginning_of_month, params[:date].try(:to_date).try(:at_end_of_month) || Date.today.at_end_of_month).map do |reservation|
+      bigBed: @room.big_bed,
+      reservations: @room.reservations.approved.for_dates(@room, params[:date].try(:to_date).try(:at_beginning_of_month) || Date.today.at_beginning_of_month, params[:date].try(:to_date).try(:at_end_of_month) || Date.today.at_end_of_month).map do |reservation|
         { id: reservation.id,
           title: reservation.name,
           phone: reservation.phone,
           places: reservation.places,
+          description: reservation.description,
           start: reservation.start_date,
           end: reservation.end_date,
           allDay: false}
@@ -43,10 +49,14 @@ class RoomsController < ApplicationController
 
   def reservation_list
     @hotel_id = @hotel.id
-    @reservations = @hotel.reservations.for_dates(@hotel, params[:start_date].try(:to_date) || Date.today, params[:end_date].try(:to_date) || Date.tomorrow)
+    @reservations = @hotel.reservations.approved
+                      .for_dates(@hotel, params[:start_date].try(:to_date) || Date.today, params[:end_date].try(:to_date) || Date.tomorrow)
+                      .order(created_at: :desc)
     @rooms = @hotel.rooms.each_with_object({}) {|room, hash| hash[room.id] = {
       number: room.number,
-      places: room.places
+      places: room.places,
+      floor: room.floor,
+      bigBed: room.big_bed
     }}
     @reservations_paginated = @reservations.page(params[:page] || 1).per(10).each_with_object({}) {|reservation, hash| hash[reservation.id] = {
       id: reservation.id,
@@ -55,6 +65,8 @@ class RoomsController < ApplicationController
       name: reservation.name,
       phone: reservation.phone,
       places: reservation.places,
+      description: reservation.description,
+      deposit: reservation.deposit,
       startDate: reservation.start_date.strftime('%d.%m.%Y'),
       endDate: reservation.end_date.strftime('%d.%m.%Y')}
     }
@@ -64,12 +76,40 @@ class RoomsController < ApplicationController
     end
   end
 
+  def pending_reservations
+    @hotel_id = @hotel.id
+    @reservations = @hotel.reservations.pending.order(created_at: :desc)
+    @rooms = @hotel.rooms.each_with_object({}) {|room, hash| hash[room.id] = {
+      number: room.number,
+      places: room.places,
+      floor: room.floor,
+      bigBed: room.big_bed
+    }}
+    @reservations_paginated = @reservations.page(params[:page] || 1).per(10).each_with_object({}) {|reservation, hash| hash[reservation.id] = {
+      id: reservation.id,
+      room: Room.find_by_id(reservation.room_id).number,
+      roomId: reservation.room_id,
+      name: reservation.name,
+      phone: reservation.phone,
+      places: reservation.places,
+      description: reservation.description,
+      created: reservation.created_at.in_time_zone('Kyiv').strftime('%d.%m.%Y %H:%M'),
+      startDate: reservation.start_date.strftime('%d.%m.%Y'),
+      endDate: reservation.end_date.strftime('%d.%m.%Y')}
+    }
+    respond_to do |format|
+      format.html { render :pending_reservations }
+      format.json {{reservations: @reservations_paginated, totalReservationsCount: @reservations }}
+    end
+  end
+
   def update
     if @hotel.rooms.find_by_id(params[:id]).update(room_params)
+      rooms = params[:floor] != 'all' ? @hotel.rooms.in_floor(params[:floor]) : @hotel.rooms
       render json: {
         success: true,
-        rooms: @hotel.rooms.in_floor(params[:floor]).each_with_object({}) {|room, hash|
-          reservations = room.reservations.for_dates(room, params[:start_date].to_date, params[:end_date].to_date)
+        rooms: rooms.each_with_object({}) {|room, hash|
+          reservations = room.reservations.approved.for_dates(room, params[:start_date].to_date, params[:end_date].to_date)
           hash[room.id] = {
             id: room.id,
             number: room.number,
@@ -81,8 +121,9 @@ class RoomsController < ApplicationController
               name: reservation.name,
               phone: reservation.phone,
               places: reservation.places,
-              startDate: reservation.start_date,
-              endDate: reservation.end_date}
+              description: reservation.description,
+              startDate: reservation.start_date.strftime('%d.%m.%Y'),
+              endDate: reservation.end_date.strftime('%d.%m.%Y')}
             }
           }
       }}
@@ -112,7 +153,7 @@ class RoomsController < ApplicationController
   end
 
   def room_params
-    params.require(:room).permit(reservations_attributes: [:id, :name, :phone, :places])
+    params.require(:room).permit(reservations_attributes: [:id, :name, :phone, :description, :places])
   end
 
   def define_hotel
