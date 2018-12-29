@@ -28,6 +28,14 @@ export default class Chess extends React.Component {
     return convertedReservations2
   }
 
+  groupRenderer = ({ group }) => {
+    return (
+      <div className="custom-group">
+        <a href={`/hotels/${this.state.hotelId}/rooms/calendar?id=${group.id}`} className="title">{group.title}</a>
+      </div>
+    )
+  }
+
   render() {
     const items = this.convertedDates(this.state.reservations)
     return (
@@ -43,6 +51,7 @@ export default class Chess extends React.Component {
           canChangeGroup={false}
           itemHeightRatio={0.8}
           dragSnap={12 * 60 * 60 * 1000}
+          groupRenderer={this.groupRenderer}
         />
       </div>
     );

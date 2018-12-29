@@ -77,7 +77,7 @@ class RoomsController < ApplicationController
   end
 
   def chess
-    @hotel_id = @hotel.id
+    @hotel_id = @hotel.slug
     @rooms = @hotel.rooms.order(:number).map {|room| {id: room.id, title: "Номер #{room.number}"}}
     @reservations = @hotel.reservations.approved.map { |reservation|
       { id: reservation.id,
