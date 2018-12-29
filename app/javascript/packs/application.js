@@ -11,6 +11,7 @@ import Room from '../components/Rooms/Room';
 import ReservationList from '../components/Reservations/ReservationList';
 import PendingReservations from '../components/Reservations/PendingReservations';
 import UserReservations from '../components/Reservations/UserReservations';
+import Chess from '../components/Reservations/Chess';
 
 // This is how react_on_rails can see the HelloWorld in the browser.
 ReactOnRails.register({
@@ -24,5 +25,6 @@ ReactOnRails.register({
   Room,
   ReservationList,
   PendingReservations,
-  UserReservations
+  UserReservations,
+  Chess
 });

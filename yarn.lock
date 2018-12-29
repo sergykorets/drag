@@ -1009,6 +1009,10 @@ base@^0.11.1:
     mixin-deep "^1.2.0"
     pascalcase "^0.1.1"
 
+batch-processor@1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/batch-processor/-/batch-processor-1.0.0.tgz#75c95c32b748e0850d10c2b168f6bdbe9891ace8"
+
 batch@0.6.1:
   version "0.6.1"
   resolved "https://registry.yarnpkg.com/batch/-/batch-0.6.1.tgz#dc34314f4e679318093fc760272525f94bf25c16"
@@ -1682,6 +1686,13 @@ create-hmac@^1.1.0, create-hmac@^1.1.2, create-hmac@^1.1.4:
     safe-buffer "^5.0.1"
     sha.js "^2.4.8"
 
+create-react-context@^0.2.2:
+  version "0.2.3"
+  resolved "https://registry.yarnpkg.com/create-react-context/-/create-react-context-0.2.3.tgz#9ec140a6914a22ef04b8b09b7771de89567cb6f3"
+  dependencies:
+    fbjs "^0.8.0"
+    gud "^1.0.0"
+
 cross-spawn@^3.0.0:
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/cross-spawn/-/cross-spawn-3.0.1.tgz#1256037ecb9f0c5f79e3d6ef135e30770184b982"
@@ -2035,6 +2046,12 @@ electron-to-chromium@^1.2.7, electron-to-chromium@^1.3.30, electron-to-chromium@
   version "1.3.52"
   resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.3.52.tgz#d2d9f1270ba4a3b967b831c40ef71fb4d9ab5ce0"
 
+element-resize-detector@^1.1.12:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/element-resize-detector/-/element-resize-detector-1.2.0.tgz#63344fd6f4e5ecff6f018d027e17b281fd4fa338"
+  dependencies:
+    batch-processor "1.0.0"
+
 elliptic@^6.0.0:
   version "6.4.0"
   resolved "https://registry.yarnpkg.com/elliptic/-/elliptic-6.4.0.tgz#cac9af8762c85836187003c8dfe193e5e2eae5df"
@@ -2386,7 +2403,7 @@ faye-websocket@~0.11.0:
   dependencies:
     websocket-driver ">=0.5.1"
 
-fbjs@^0.8.4:
+fbjs@^0.8.0, fbjs@^0.8.4:
   version "0.8.17"
   resolved "https://registry.yarnpkg.com/fbjs/-/fbjs-0.8.17.tgz#c4d598ead6949112653d6588b01a5cdcd9f90fdd"
   dependencies:
@@ -2723,6 +2740,10 @@ graceful-fs@^4.1.11, graceful-fs@^4.1.2, graceful-fs@^4.1.6, graceful-fs@^4.1.9:
   version "4.1.11"
   resolved "https://registry.yarnpkg.com/graceful-fs/-/graceful-fs-4.1.11.tgz#0e8bdfe4d1ddb8854d64e04ea7c00e2a026e5658"
 
+gud@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/gud/-/gud-1.0.0.tgz#a489581b17e6a70beca9abe3ae57de7a499852c0"
+
 handle-thing@^1.2.5:
   version "1.2.5"
   resolved "https://registry.yarnpkg.com/handle-thing/-/handle-thing-1.2.5.tgz#fd7aad726bf1a5fd16dfc29b2f7a6601d27139c4"
@@ -3054,6 +3075,10 @@ inline-style-prefixer@^2.0.0:
   dependencies:
     bowser "^1.0.0"
     hyphenate-style-name "^1.0.1"
+
+interactjs@^1.3.4:
+  version "1.3.4"
+  resolved "https://registry.yarnpkg.com/interactjs/-/interactjs-1.3.4.tgz#9d5aa886f8fa03ea2f6c711e688792e3d3bde1ff"
 
 internal-ip@1.2.0:
   version "1.2.0"
@@ -3563,6 +3588,10 @@ lodash.clonedeep@^4.3.2:
 lodash.debounce@^4.0.8:
   version "4.0.8"
   resolved "https://registry.yarnpkg.com/lodash.debounce/-/lodash.debounce-4.0.8.tgz#82d79bff30a67c4005ffd5e2515300ad9ca4d7af"
+
+lodash.isequal@^4.5.0:
+  version "4.5.0"
+  resolved "https://registry.yarnpkg.com/lodash.isequal/-/lodash.isequal-4.5.0.tgz#415c4478f2bcc30120c22ce10ed3226f7d3e18e0"
 
 lodash.isfunction@^3.0.9:
   version "3.0.9"
@@ -5174,6 +5203,14 @@ react-big-calendar@^0.20.1:
     react-overlays "^0.8.3"
     uncontrollable "^6.0.0"
     warning "^4.0.2"
+
+react-calendar-timeline@^0.22.0:
+  version "0.22.0"
+  resolved "https://registry.yarnpkg.com/react-calendar-timeline/-/react-calendar-timeline-0.22.0.tgz#4c832398ebdae0ed1d19a320f7b58c7f26b7158e"
+  dependencies:
+    create-react-context "^0.2.2"
+    element-resize-detector "^1.1.12"
+    lodash.isequal "^4.5.0"
 
 react-dates@^18.2.2:
   version "18.2.2"

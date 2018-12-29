@@ -13,6 +13,7 @@ Rails.application.routes.draw do
         get :pending_reservations
         get :calendar
         get :reservation_list
+        get :chess
       end
     end
     resources :reservations do

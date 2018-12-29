@@ -2,7 +2,7 @@ class RoomsController < ApplicationController
   layout 'hotel_admin'
   before_action :authenticate_user!
   before_action :define_hotel
-  before_action :check_rooms, only: [:calendar, :reservation_list, :pending_reservations]
+  before_action :check_rooms, only: [:calendar, :reservation_list, :pending_reservations, :chess]
 
   def index
     @hotel_id = @hotel.id
@@ -73,6 +73,22 @@ class RoomsController < ApplicationController
     respond_to do |format|
       format.html { render :reservation_list }
       format.json {{reservations: @reservations_paginated, totalReservationsCount: @reservations.count }}
+    end
+  end
+
+  def chess
+    @hotel_id = @hotel.id
+    @rooms = @hotel.rooms.order(:number).map {|room| {id: room.id, title: "Номер #{room.number}"}}
+    @reservations = @hotel.reservations.approved.map { |reservation|
+      { id: reservation.id,
+        group: reservation.room_id,
+        title: reservation.name,
+        start_time: (reservation.start_date.to_datetime + Time.parse("12:00").seconds_since_midnight.seconds).strftime('%Y-%m-%d %H:%M'),
+        end_time: (reservation.end_date.to_datetime + Time.parse("12:00").seconds_since_midnight.seconds).strftime('%Y-%m-%d %H:%M'),}
+    }
+    respond_to do |format|
+      format.html { render :chess }
+      format.json {{reservations: @reservations}}
     end
   end
 
