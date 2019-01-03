@@ -23,6 +23,7 @@ export default class Hotel extends React.Component {
       nearbyHotels: this.props.nearbyHotels,
       logged: this.props.logged,
       admin: this.props.admin,
+      owner: this.props.owner,
       suggestEmail: '',
       suggestBody: '',
       showSuggestForm: false,
@@ -37,7 +38,9 @@ export default class Hotel extends React.Component {
         endDate: null
       },
       blockedDates: [],
-      availableRooms: []
+      availableRooms: [],
+      replyForms: {},
+      reply: ''
     };
   }
 
@@ -252,6 +255,52 @@ export default class Hotel extends React.Component {
     });
   }
 
+  deleteReply = (id) => {
+    if(confirm('Видалити відповідь?')) {
+      $.ajax({
+        url: `/hotels/${this.state.hotel.slug}/replies/${id}.json`,
+        type: 'DELETE',
+        success: (resp) => {
+          NotificationManager.success('Відповідь видалено')
+          window.location.reload()
+        }
+      });
+    }
+  }
+
+  showReplyForm = (id) => {
+    this.setState({
+      ...this.state,
+      replyForms: {
+        ...this.state.replyForms,
+        [id]: !this.state.replyForms[id]
+      }
+    })
+  }
+
+  submitReply = (id, google) => {
+    $.ajax({
+      url: `/hotels/${this.state.hotel.slug}/replies.json`,
+      type: 'POST',
+      data: {
+        reply: {
+          repliable_id: id,
+          body: this.state.reply,
+          google: google
+        }
+      },
+      success: (resp) => {
+        if (resp.success) {
+          NotificationManager.success('Відповідь залишено')
+          window.location.reload()
+        } else {
+          NotificationManager.error('Відповідь не залишено')
+          window.location.reload()
+        }
+      }
+    });
+  }
+
   render() {
     console.log(this.state)
     const images = this.state.hotel.photos.map((photo) => {return ({ original: photo.photo, thumbnail: photo.photo, description: photo.name})})
@@ -420,11 +469,11 @@ export default class Hotel extends React.Component {
                      fullSymbol="fa fa-star fa-2x" className='hotel-stars' initialRating={this.state.reviewRating}/>
             </div>
           </div>
+          <hr/>
           <div className='reviews'>
             { this.state.hotel.googleReviews.map((review, i) => {
               return (
                 <Fragment key={i}>
-                  <hr/>
                   <div className='review'>
                     <div className={ review.id ? 'round-image-200' : 'review-avatar-div' }><img className='review-avatar' src={review.avatar} alt={review.author} /></div>
                     <div className='review-content'>
@@ -432,6 +481,7 @@ export default class Hotel extends React.Component {
                         <div className='left'>
                           <span className='author'>{review.author}</span>
                           <span className='date'>{review.created}</span>
+                          { !review.reply && this.state.owner && <button className='btn btn-sm btn-outline-danger' onClick={() => this.showReplyForm(review.id)}>Відповісти</button>}
                         </div>
                         <div className='right'>
                           <Rater initialRating={parseInt(review.rating, 10)} emptySymbol="fa fa-star-o"
@@ -441,9 +491,32 @@ export default class Hotel extends React.Component {
                       </div>
                       <div className='review-body'>
                         {review.text}
+                        { this.state.replyForms[review.id] &&
+                          <div className='reply'>
+                            <div className='review-content'>
+                              <div className='review-body'>
+                                <input type="text" className='form-control' value={this.state.reply} onChange={(e) => this.handleInputChange('reply', e.target.value)} />
+                                <button className='btn btn-sm btn-danger float-right mt-3' onClick={() => this.submitReply(review.id, review.google)}>Надіслати</button>
+                              </div>
+                            </div>
+                          </div>}
+                        { review.reply &&
+                          <div className='reply'>
+                            { review.reply.destroyable && <i className='fa fa-trash-o' onClick={() => this.deleteReply(review.reply.id)}/>}
+                            <div className='round-image-30'><img src={review.reply.avatar} alt={review.reply.author} /></div>
+                            <div className='review-content'>
+                              <div className='content-top'>
+                                <span className='author'>{review.reply.author}</span>
+                              </div>
+                              <div className='review-body'>
+                                {review.reply.body}
+                              </div>
+                            </div>
+                          </div>}
                       </div>
                     </div>
                   </div>
+                  <hr/>
                 </Fragment>
               )})}
           </div>

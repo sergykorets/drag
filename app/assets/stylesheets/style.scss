@@ -478,3 +478,22 @@ i {
 .page-wraper {
   margin-top: 35px;
 }
+.content-top {
+  button {
+    margin-left: 30px;
+  }
+}
+.reply {
+  display: flex;
+  align-items: center;
+  margin-left: 30px;
+  margin-top: 20px;
+  border: 1px dashed darkgrey;
+  border-radius: 5px;
+  padding: 20px;
+  .fa {
+    position: relative;
+    left: 99%;
+    bottom: 25px;
+  }
+}

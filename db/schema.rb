@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181230124117) do
+ActiveRecord::Schema.define(version: 20190103110543) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -107,6 +107,15 @@ ActiveRecord::Schema.define(version: 20181230124117) do
   create_table "places", id: :serial, force: :cascade do |t|
     t.integer "number"
     t.integer "user_id"
+  end
+
+  create_table "replies", force: :cascade do |t|
+    t.integer "user_id"
+    t.text "body"
+    t.integer "repliable_id"
+    t.string "repliable_type"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "reservations", force: :cascade do |t|

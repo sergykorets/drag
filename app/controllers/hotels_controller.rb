@@ -35,6 +35,7 @@ class HotelsController < ApplicationController
                   description: "#{@hotel.name} драгобрат",
                   keywords: "#{@hotel.name} драгобрат"
     @admin = Rails.env.development? || (current_user && current_user.admin)
+    @owner = (current_user && @hotel.user == current_user)
     @logged = !current_user.nil?
     @user_name = current_user.try(:name)
     @nearby_hotels = []
@@ -188,18 +189,33 @@ class HotelsController < ApplicationController
 
     def combine_reviews
       a = @hotel.google_reviews.order(time: :desc).map do |review|
-        { author: review.author_name,
+        { id: review.id,
+          google: true,
+          author: review.author_name,
           avatar: review.profile_photo_url,
           rating: review.rating,
           text: review.text,
+          reply: review.reply && {
+            id: review.reply.id,
+            avatar: review.reply.user.remote_avatar_url.present? ? review.reply.user.remote_avatar_url : review.reply.user.avatar.url(:thumb),
+            author: review.reply.user.name || review.reply.user.email,
+            body: review.reply.body,
+            destroyable: current_user == review.reply.user},
           created: DateTime.strptime(review.time.to_s,'%s').strftime('%d.%m.%Y')}
       end
       b = @hotel.reviews.order(created_at: :desc).map do |review|
         { id: review.id,
+          google: false,
           author: review.user.name || review.user.email,
           avatar: review.user.remote_avatar_url.present? ? review.user.remote_avatar_url : review.user.avatar,
           rating: review.rating,
           text: review.comment,
+          reply: review.reply && {
+            id: review.reply.id,
+            avatar: review.reply.user.remote_avatar_url.present? ? review.reply.user.remote_avatar_url : review.reply.user.avatar.url(:thumb),
+            author: review.reply.user.name || review.reply.user.email,
+            body: review.reply.body,
+            destroyable: current_user == review.reply.user},
           destroyable: current_user == review.user,
           created: review.created_at.strftime('%d.%m.%Y')}
       end

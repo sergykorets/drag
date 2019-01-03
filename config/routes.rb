@@ -8,6 +8,7 @@ Rails.application.routes.draw do
                                        omniauth_callbacks: 'omniauth_callbacks' }
   resources :hotels do
     resources :reviews, only: [:create, :destroy]
+    resources :replies, only: [:create, :destroy]
     resources :rooms do
       collection do
         get :pending_reservations
