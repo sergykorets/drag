@@ -190,10 +190,6 @@ class RoomsController < ApplicationController
   end
 
   def define_hotel
-    @hotel = if current_user.admin
-      Hotel.friendly.find(params[:hotel_id])
-    else
-      current_user.hotels.friendly.find(params[:hotel_id])
-    end
+    @hotel = Hotel.where("name ILIKE ?", 'Піпаш').first
   end
 end

@@ -132,19 +132,6 @@ export default class Rooms extends React.Component {
         </div>
         <hr/>
         <div className='form-group'>
-          <div className='custom-checkbox'>
-            <input type='checkbox' id="allow_booking" onChange={() => this.handleInputChange('allowBooking', !this.state.allowBooking)} checked={this.state.allowBooking} />
-            <label htmlFor="allow_booking">Дозволити бронювати онлайн</label>
-          </div>
-        </div>
-        <div className='form-group'>
-          <div className='custom-checkbox'>
-            <input type='checkbox' disabled={!this.state.allowBooking} id="auto_booking" onChange={() => this.handleInputChange('autoBooking', !this.state.autoBooking)} checked={this.state.allowBooking && this.state.autoBooking} />
-            <label htmlFor="auto_booking">Дозволити автоматичне бронювання</label>
-          </div>
-        </div>
-        <hr/>
-        <div className='form-group'>
           <button className='btn btn-block btn-dark' onClick={this.handleSubmit}>Зберегти</button>
         </div>
       </div>

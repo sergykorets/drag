@@ -1,50 +1,22 @@
 <nav class="navbar fixed-top navbar-expand-lg hotel-admin">
   <div class="container">
-    <b><strong><%= link_to 'Готель', hotel_path(params[:hotel_id] || params[:id]), class: 'navbar-brand' %></strong></b>
     <button class="navbar-toggler" data-target="#navbarSupportedContent" data-toggle="collapse" type="button">
       <i class="navbar-toggler-icon fa fa-bars"></i>
 <!--      <span class="navbar-toggler-icon"></span>-->
     </button>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav mr-auto">
-        <li class='nav-item'><%= link_to 'Налаштування', hotel_rooms_path(params[:hotel_id] || params[:id]), class: 'nav-link' %></li>
-        <li class='nav-item'><%= link_to 'Шахматка', chess_hotel_rooms_path(params[:hotel_id] || params[:id]), class: 'nav-link' %></li>
-        <li class='nav-item'><%= link_to 'Календар', calendar_hotel_rooms_path(params[:hotel_id] || params[:id]), class: 'nav-link' %></li>
-        <li class='nav-item'><%= link_to 'Номери', hotel_reservations_path(params[:hotel_id] || params[:id]), class: 'nav-link' %></li>
-        <li class='nav-item'><%= link_to 'Бронювання', reservation_list_hotel_rooms_path(params[:hotel_id] || params[:id]), class: 'nav-link' %></li>
+        <li class='nav-item'><%= link_to 'Налаштування', hotel_rooms_path(@hotel.id), class: 'nav-link' %></li>
+        <li class='nav-item'><%= link_to 'Шахматка', chess_hotel_rooms_path(@hotel.id), class: 'nav-link' %></li>
+        <li class='nav-item'><%= link_to 'Календар', calendar_hotel_rooms_path(@hotel.id), class: 'nav-link' %></li>
+        <li class='nav-item'><%= link_to 'Номери', hotel_reservations_path(@hotel.id), class: 'nav-link' %></li>
+        <li class='nav-item'><%= link_to 'Бронювання', reservation_list_hotel_rooms_path(@hotel.id), class: 'nav-link' %></li>
         <% if params[:hotel_id] == 'yuliana' || params[:id] == 'yuliana' %>
           <li class='nav-item'><%= link_to 'Ратрак', ratrak_hotel_path(params[:hotel_id] || params[:id]), class: 'nav-link' %></li>
         <% end %>
-        <% hotel = Hotel.friendly.find(params[:hotel_id] || params[:id]) %>
+        <% hotel = Hotel.friendly.find(@hotel.id) %>
         <% if hotel.allow_booking && (!hotel.auto_booking || hotel.reservations.pending.count > 0) %>
-          <li class='nav-item'><%= link_to 'Запити бронювань', pending_reservations_hotel_rooms_path(params[:hotel_id] || params[:id]), class: 'nav-link' %></li>
-        <% end %>
-      </ul>
-      <ul class="navbar-nav ml-auto">
-        <% if user_signed_in? %>
-          <% if !current_user.name.blank? %>
-            <li class='nav-item'><%= link_to current_user.name, edit_user_registration_path, class: 'nav-link' %></li>
-          <% else %>
-            <li class="nav-item"><%= link_to 'Редагувати профіль', edit_user_registration_path, class: 'nav-link' %></li>
-          <% end %>
-          <li class="round-image-30"><%= image_tag(user_avatar(current_user)) %></li>
-          <li class="nav-item"><%= link_to 'Вийти', destroy_user_session_path, data: {:confirm => "Вийти?"}, class: 'nav-link' %></li>
-          </li>
-        <% else %>
-          <li class="nav-item">
-            <% if Rails.env.development? %>
-              <%= link_to 'Зареєструватися', new_user_registration_path, class: 'nav-link' %>
-            <% else %>
-              <a href='https://dragobrat.herokuapp.com/users/sign_up' class="nav-link">Зареєструватися</a>
-            <% end %>
-          </li>
-          <li class="nav-item">
-            <% if Rails.env.development? %>
-              <%= link_to 'Увійти', new_user_session_path, class: 'nav-link' %>
-            <% else %>
-              <a href='https://dragobrat.herokuapp.com/users/sign_in' class="nav-link">Увійти</a>
-            <% end %>
-          </li>
+          <li class='nav-item'><%= link_to 'Запити бронювань', pending_reservations_hotel_rooms_path(@hotel.id), class: 'nav-link' %></li>
         <% end %>
       </ul>
     </div>
