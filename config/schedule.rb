@@ -7,8 +7,11 @@
 #
 # set :output, "/path/to/my/cron_log.log"
 #
+set :environment, "development"
+set :output, {:error => "log/cron_error_log.log", :standard => "log/cron_log.log"}
+
 every 1.minute do
-  rake "db:reservetions_push", :environment => "development"
+  rake "db:reservations_sync", :environment => "development"
 end
 #
 # every 4.days do
