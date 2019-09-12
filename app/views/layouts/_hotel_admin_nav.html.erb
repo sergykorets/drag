@@ -14,10 +14,7 @@
         <% if params[:hotel_id] == 'yuliana' || params[:id] == 'yuliana' %>
           <li class='nav-item'><%= link_to 'Ратрак', ratrak_hotel_path(params[:hotel_id] || params[:id]), class: 'nav-link' %></li>
         <% end %>
-        <% hotel = Hotel.friendly.find(@hotel.id) %>
-        <% if hotel.allow_booking && (!hotel.auto_booking || hotel.reservations.pending.count > 0) %>
-          <li class='nav-item'><%= link_to 'Запити бронювань', pending_reservations_hotel_rooms_path(@hotel.id), class: 'nav-link' %></li>
-        <% end %>
+        <li class='nav-item'><%= link_to 'Запити бронювань', pending_reservations_hotel_rooms_path(@hotel.id), class: 'nav-link' %></li>
       </ul>
     </div>
   </div>
