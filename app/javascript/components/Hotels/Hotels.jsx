@@ -2,7 +2,7 @@ import React, {Fragment} from 'react';
 import Rater from 'react-rating'
 import ReactGA from 'react-ga';
 import ReactPixel from 'react-facebook-pixel';
-import Masonry from 'react-mason';
+import Masonry from 'react-masonry-css';
 import { Tooltip, Modal, ModalHeader, ButtonDropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
 import Leaflet from 'leaflet';
 import { Map, Marker, Popup, TileLayer, GeoJSON } from 'react-leaflet';
@@ -21,7 +21,6 @@ export default class Hotels extends React.Component {
       sortOrderOpen: false,
       sortType: '',
       sortOrder: '',
-      moved: false,
       admin: this.props.admin,
       tooltips: {},
       price: {
@@ -38,10 +37,6 @@ export default class Hotels extends React.Component {
       ReactGA.ga('send', 'pageview', `/hotels`);
       ReactPixel.pageView();
     }
-  }
-
-  _onMouseMove = () => {
-    this.setState({moved: true})
   }
 
   handleSearch = (field, value) => {
@@ -88,7 +83,7 @@ export default class Hotels extends React.Component {
         (parseFloat(a.price) - parseFloat(b.price)) : (parseFloat(b.price) - parseFloat(a.price)))) : parseFloat(a.position) - parseFloat(b.position)))
     }
     return (
-      <div className="whole-page" onMouseMove={this._onMouseMove}>
+      <div className="whole-page">
         <div className={this.props.cafe ? 'top-page restaurants' : 'top-page'}>
           <div className='container'>
             <div className="top-banners">
@@ -188,7 +183,7 @@ export default class Hotels extends React.Component {
           </div>
         </div>
         <div className='container'>
-          <Masonry>
+          <Masonry breakpointCols={{default: 4, 1199: 3, 991: 2, 767: 1}}>
             { hotels.map((hotel, index) => {
               return (
                 <div key={index} className="hotel">

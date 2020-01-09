@@ -5364,9 +5364,10 @@ react-loading@^2.0.3:
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/react-loading/-/react-loading-2.0.3.tgz#e8138fb0c3e4674e481b320802ac7048ae14ffb9"
 
-react-mason@^1.1.2:
-  version "1.1.2"
-  resolved "https://registry.yarnpkg.com/react-mason/-/react-mason-1.1.2.tgz#e771ff1e946a2c4a53c60654cdd3ceeb3683f827"
+react-masonry-css@^1.0.14:
+  version "1.0.14"
+  resolved "https://registry.yarnpkg.com/react-masonry-css/-/react-masonry-css-1.0.14.tgz#2ac1ca7bb2c7e96826f7da3accc9e95ae12b2f65"
+  integrity sha512-oAPVOCMApTT0HkxZJy84yU1EWaaQNZnJE0DjDMy/L+LxZoJEph4RRXsT9ppPKbFSo/tCzj+cCLwiBHjZmZ2eXA==
 
 react-moment-proptypes@^1.6.0:
   version "1.6.0"
