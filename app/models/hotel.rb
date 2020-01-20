@@ -57,7 +57,7 @@ class Hotel < ApplicationRecord
           google_hotels[i]['result']['photos'].each_with_index do |photo,j|
             spot = client.spot(google_hotels[i]['result']['place_id'])
             puts spot.inspect
-            url = spot.photos[j].fetch_url(800)
+            url = spot.photos[j].fetch_url(800) if spot.photos[j]
             if !GooglePhoto.exists?(hotel_id: hotel.id, photo_url: url)
               GooglePhoto.create(hotel_id: hotel.id, photo_url: url)
             end
