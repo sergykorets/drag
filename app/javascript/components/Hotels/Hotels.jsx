@@ -7,12 +7,14 @@ import { Tooltip, Modal, ModalHeader, ButtonDropdown, DropdownToggle, DropdownMe
 import Leaflet from 'leaflet';
 import { Map, Marker, Popup, TileLayer, GeoJSON } from 'react-leaflet';
 import InputRange from 'react-input-range';
+import Chat from "../common/Chat";
 
 export default class Hotels extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
+      showChat: false,
       hotels: this.props.hotels,
       nameSearch: '',
       ratingSearch: '',
@@ -26,7 +28,7 @@ export default class Hotels extends React.Component {
       price: {
         min: this.props.minPrice,
         max: this.props.maxPrice
-      },
+      }
     };
   }
 
@@ -41,7 +43,7 @@ export default class Hotels extends React.Component {
 
   handleSearch = (field, value) => {
     this.setState({[field]: value})
-  }
+  };
 
   toggle = (index, field) => {
     this.setState({
@@ -54,21 +56,22 @@ export default class Hotels extends React.Component {
         }
       }
     });
-  }
+  };
 
   handleModal = () => {
     this.setState({
       showMap: !this.state.showMap
     });
-  }
+  };
 
   toggleDropdown = (type) => {
     this.setState({
       [type]: !this.state[type]
     });
-  }
+  };
 
   render() {
+    console.log(this.state);
     let hotels = this.state.hotels.filter(h => h.name.toLowerCase().includes(this.state.nameSearch.toLowerCase()))
       .filter(h => parseFloat(h.googleRating) >= parseFloat(this.state.ratingSearch ? this.state.ratingSearch : 0))
     if (!this.props.cafe) {
@@ -86,11 +89,11 @@ export default class Hotels extends React.Component {
       <div className="whole-page">
         <div className={this.props.cafe ? 'top-page restaurants' : 'top-page'}>
           <div className='container'>
-            <div className="top-banners">
-              <a id='left-ads' href="https://dragobrat-freeride.com.ua/ua/" target="_blank"><img src="/images/freeride-yarema.jpg" /></a>
-              <a className='mobile' href="/skipass"><img src="/images/december_square.jpg" /></a>
-              <a className='wide' href="/skipass"><img src="/images/december_fb_header.jpg" /></a>
-            </div>
+            {/*<div className="top-banners">*/}
+            {/*  <a id='left-ads' href="https://dragobrat-freeride.com.ua/ua/" target="_blank"><img src="/images/freeride-yarema.jpg" /></a>*/}
+            {/*  <a className='mobile' href="/skipass"><img src="/images/december_square.jpg" /></a>*/}
+            {/*  <a className='wide' href="/skipass"><img src="/images/december_fb_header.jpg" /></a>*/}
+            {/*</div>*/}
             {/*<div className='introduction'>*/}
               {/*/!*<p>Основою цього сайту є <strong><b>Google Maps API</b></strong>. Готелі, кафе, фото та відгуки до них автоматично оновлюються разом з тим, що є на Google картах. Місцезнаходження закладів*!/*/}
                 {/*/!*можна подивитися на <strong><b>3D карті</b></strong>. До кожного готелю можна подивитися заклади, які знаходяться поблизу. Готелі, які присутні на <strong><b>Booking.com</b></strong> також показуються на цьому сайті. Якщо Ваш заклад відсутній на сайті,*!/*/}
@@ -100,7 +103,7 @@ export default class Hotels extends React.Component {
               <div className='row'>
                 <div className='col-lg-4 filters'>
                   <div className='labels'>
-                    { !this.props.cafe ? <label>Готель</label> : <label>Кафе</label>}
+                    { !this.props.cafe ? <label onClick={() => this.handleChat()}>Готель</label> : <label>Кафе</label>}
                     <ButtonDropdown isOpen={this.state.sortTypeOpen} toggle={() => this.toggleDropdown('sortTypeOpen')}>
                       <DropdownToggle caret>
                         {this.state.sortType === 'googleRating' && 'За рейтингом'}

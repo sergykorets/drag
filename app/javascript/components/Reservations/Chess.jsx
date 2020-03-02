@@ -1,6 +1,6 @@
 import React, {Fragment} from 'react';
-import interactjs from 'interactjs'
-import moment from 'moment'
+import interactjs from 'interactjs';
+import moment from 'moment';
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import {NotificationContainer, NotificationManager} from 'react-notifications';
 import Timeline from 'react-calendar-timeline'
