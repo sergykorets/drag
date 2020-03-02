@@ -87,7 +87,7 @@ export default class Hotels extends React.Component {
         <div className={this.props.cafe ? 'top-page restaurants' : 'top-page'}>
           <div className='container'>
             <div className="top-banners">
-              <a id='left-ads' href="https://dragobrat-freeride.com.ua/ua/" target="_blank"><img src="/images/freeride-yarema.jpg" /></a>
+              {/*<a id='left-ads' href="https://dragobrat-freeride.com.ua/ua/" target="_blank"><img src="/images/freeride-yarema.jpg" /></a>*/}
               <a className='mobile' href="/skipass"><img src="/images/december_square.jpg" /></a>
               <a className='wide' href="/skipass"><img src="/images/december_fb_header.jpg" /></a>
             </div>
