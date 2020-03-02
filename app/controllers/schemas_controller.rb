@@ -4,4 +4,8 @@ class SchemasController < ApplicationController
   end
 
   def skipass;  end
+
+  def chat
+    @user = current_user && {name: current_user.name, id: current_user.id}
+  end
 end

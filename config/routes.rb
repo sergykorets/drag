@@ -33,6 +33,7 @@ Rails.application.routes.draw do
   get '/sitemap.xml.gz', to: redirect("https://#{ENV['S3_BUCKET_NAME']}.s3.amazonaws.com/sitemaps/sitemap.xml.gz", status: 301)
   get '/schema', to: 'schemas#index'
   get '/skipass', to: 'schemas#skipass'
+  get '/chat', to: 'schemas#chat'
   get '/reservations', to: 'reservations#user_reservations'
   get '/.well-known/pki-validation/A53663A8473F98B5AEB150819BAEA25C.txt', to: 'ssl_verify#verify_1'
   get '/.well-known/acme-challenge/HNn4g3VE6rqYid3Vlh4bcQ8XArEFElKb-gzyNjZIdUg', to: 'ssl_verify#verify_2'

@@ -1,0 +1,20 @@
+.message-list {
+  height: 500px;
+  overflow: hidden;
+  padding: 10px 0 10px 0;
+  box-shadow: 7px 7px 17px -5px rgba(0,0,0,0.75);
+  border-radius: 5px;
+  margin: 10px 0 10px 0;
+  .rce-mlist {
+    padding: 0 10px 0 10px;
+  }
+}
+
+.rce-container-input {
+  border-radius: 5px;
+  padding-left: 10px;
+  box-shadow: 7px 7px 17px -5px rgba(0,0,0,0.75);
+  .rce-input-buttons {
+    margin-right: 15px;
+  }
+}
