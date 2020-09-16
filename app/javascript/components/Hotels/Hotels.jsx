@@ -86,11 +86,11 @@ export default class Hotels extends React.Component {
       <div className="whole-page">
         <div className={this.props.cafe ? 'top-page restaurants' : 'top-page'}>
           <div className='container'>
-            <div className="top-banners">
-              {/*<a id='left-ads' href="https://dragobrat-freeride.com.ua/ua/" target="_blank"><img src="/images/freeride-yarema.jpg" /></a>*/}
-              <a className='mobile' href="/skipass"><img src="/images/december_square.jpg" /></a>
-              <a className='wide' href="/skipass"><img src="/images/december_fb_header.jpg" /></a>
-            </div>
+            {/*<div className="top-banners">*/}
+            {/*  /!*<a id='left-ads' href="https://dragobrat-freeride.com.ua/ua/" target="_blank"><img src="/images/freeride-yarema.jpg" /></a>*!/*/}
+            {/*  <a className='mobile' href="/skipass"><img src="/images/december_square.jpg" /></a>*/}
+            {/*  <a className='wide' href="/skipass"><img src="/images/december_fb_header.jpg" /></a>*/}
+            {/*</div>*/}
             {/*<div className='introduction'>*/}
               {/*/!*<p>Основою цього сайту є <strong><b>Google Maps API</b></strong>. Готелі, кафе, фото та відгуки до них автоматично оновлюються разом з тим, що є на Google картах. Місцезнаходження закладів*!/*/}
                 {/*/!*можна подивитися на <strong><b>3D карті</b></strong>. До кожного готелю можна подивитися заклади, які знаходяться поблизу. Готелі, які присутні на <strong><b>Booking.com</b></strong> також показуються на цьому сайті. Якщо Ваш заклад відсутній на сайті,*!/*/}
