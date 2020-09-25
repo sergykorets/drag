@@ -28,7 +28,10 @@ export default class Hotels extends React.Component {
       price: {
         min: this.props.minPrice,
         max: this.props.maxPrice
-      }
+      },
+      mapCenter: [48.247, 24.242],
+      mapZoom: 15,
+      popups: {}
     };
   }
 
@@ -58,15 +61,16 @@ export default class Hotels extends React.Component {
     });
   };
 
-  handleModal = () => {
-    this.setState({
-      showMap: !this.state.showMap
-    });
-  };
-
   toggleDropdown = (type) => {
     this.setState({
       [type]: !this.state[type]
+    });
+  };
+
+  popupHotel = (location, zoom) => {
+    this.setState({
+      mapCenter: location,
+      mapZoom: zoom
     });
   };
 
@@ -149,7 +153,7 @@ export default class Hotels extends React.Component {
                     </Fragment>}
                 </div>
                 { !this.props.cafe &&
-                  <div className='col-lg-3'>
+                  <div className='col-lg-4'>
                     <label>Ціна</label>
                     <ButtonDropdown className='form-control' isOpen={this.state.dropdownOpen} toggle={() => this.toggleDropdown('dropdownOpen')}>
                       <DropdownToggle color='white' caret>
@@ -165,7 +169,7 @@ export default class Hotels extends React.Component {
                       </DropdownMenu>
                     </ButtonDropdown>
                   </div>}
-                <div className='col-lg-3 filters'>
+                <div className='col-lg-4 filters'>
                   <label>Рейтинг</label>
                   <select className='form-control' onChange={(e) => this.handleSearch('ratingSearch', e.target.value)} value={this.state.ratingSearch} >
                     <option value={0}>Фільтр по рейтингу</option>
@@ -177,82 +181,107 @@ export default class Hotels extends React.Component {
                     <option value={4.5}>Рейтинг вище 4.5</option>
                   </select>
                 </div>
-                <div className='col-lg-2'>
-                  <label>Карта</label>
-                  <button onClick={this.handleModal} className='btn map-btn'>{hotels.length} шт</button>
-                </div>
               </div>
             </div>
           </div>
         </div>
         <div className='container'>
-          <Masonry breakpointCols={{default: 4, 1199: 3, 991: 2, 767: 1}}>
-            { hotels.map((hotel, index) => {
-              return (
-                <div key={index} className="hotel">
-                  <div className="card">
-                    <div className="card-img">
-                      { hotel.avatar &&
-                      <a href={`/hotels/${hotel.slug}`} className="image-popup fh5co-board-img"
-                         title={hotel.name}><img src={hotel.avatar || '/images/missing.jpg'} alt={hotel.name}/></a>}
-                    </div>
-                    <div className="card-body">
-                      <div className='body-top'>
-                        <a href={`/hotels/${hotel.slug}`}><h1>{hotel.name}</h1></a>
-                        { hotel.price &&
-                          <Fragment>
-                            <span>
-                              <span className='hotel-price'>{hotel.price} UAH</span>
-                              <i className="fa fa-info-circle" id={`TooltipExample${index}`}></i>
-                            </span>
-                            <Tooltip placement="bottom" isOpen={this.state.tooltips[index] && this.state.tooltips[index].price} target={`TooltipExample${index}`} toggle={() => this.toggle(index, 'price')}>
-                               Мінімальна ціна з людини за 1 ніч
-                            </Tooltip>
-                          </Fragment>}
-                      </div>
-                      <div className='body-bottom'>
-                        <Rater initialRating={parseFloat(hotel.googleRating)} emptySymbol="fa fa-star-o"
-                               fullSymbol="fa fa-star" readonly className='hotel-stars'/>
-                        {hotel.location && <a className='3d-link' href={hotel.location} target="_blank">3D карта</a>}
-                      </div>
-                      <div className='body-bottom'>
-                        <div className='icons'>
-                          { hotel.sauna &&
-                            <Fragment>
-                              <img id={`Sauna-${index}`} src="/images/sauna.svg"/>
-                              <Tooltip placement="bottom" isOpen={this.state.tooltips[index] && this.state.tooltips[index].sauna} target={`Sauna-${index}`} toggle={() => this.toggle(index, 'sauna')}>
-                                Баня
-                              </Tooltip>
-                            </Fragment>}
-                          { hotel.chan &&
-                            <Fragment>
-                              <img id={`Chan-${index}`} src="/images/chan.png"/>
-                              <Tooltip placement="bottom" isOpen={this.state.tooltips[index] && this.state.tooltips[index].chan} target={`Chan-${index}`} toggle={() => this.toggle(index, 'chan')}>
-                                Чан
-                              </Tooltip>
-                            </Fragment>}
-                          { hotel.disco &&
-                            <Fragment>
-                              <img id={`Disco-${index}`} src="/images/disco.svg"/>
-                              <Tooltip placement="bottom" isOpen={this.state.tooltips[index] && this.state.tooltips[index].disco} target={`Disco-${index}`} toggle={() => this.toggle(index, 'disco')}>
-                                Дискотека
-                              </Tooltip>
-                            </Fragment>}
+          <div className='row'>
+            <div className='col-lg-6 col-md-12'>
+              <Map id='full-map' center={this.state.mapCenter} zoom={this.state.mapZoom}>
+                <TileLayer
+                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                  attribution="&copy; <a href=&quot;http://osm.org/copyright&quot;>OpenStreetMap</a> contributors"
+                />
+                { hotels.map((hotel, i) => {
+                  if (hotel.lat) {
+                    return (
+                      <Marker key={i} position={[hotel.lat, hotel.lng]} opacity={this.state.mapCenter.join() === [hotel.lat, hotel.lng].join() ? 0.5 : 1}>
+                        <Popup>
+                          <a href={`/hotels/${hotel.slug}`}>{hotel.name}</a><br/>
+                          {hotel.price && !this.props.cafe && <Fragment><span>Ціна: {hotel.price} UAH</span><br/></Fragment>}
+                          <span>Рейтинг: {hotel.googleRating}/5</span><br/>
+                          <a href={hotel.location} target="_blank">3D карта</a>
+                        </Popup>
+                      </Marker>
+                    )}})}
+              </Map>
+            </div>
+            <div className='col-lg-6 col-md-12'>
+              <div className='hotels-list'>
+                <Masonry breakpointCols={{default: 2, 1199: 2, 991: 2, 767: 1}}>
+                  { hotels.map((hotel, index) => {
+                    return (
+                      <div key={index}
+                           className="hotel"
+                           onMouseOver={() => this.popupHotel([hotel.lat, hotel.lng], 17)}
+                           onTouchStart={() => this.popupHotel([hotel.lat, hotel.lng], 17)}>
+                        <div className="card">
+                          <div className="card-img">
+                            { hotel.avatar &&
+                            <a href={`/hotels/${hotel.slug}`} className="image-popup fh5co-board-img"
+                               title={hotel.name}><img src={hotel.avatar || '/images/missing.jpg'} alt={hotel.name}/></a>}
+                          </div>
+                          <div className="card-body">
+                            <div className='body-top'>
+                              <a href={`/hotels/${hotel.slug}`}><h1>{hotel.name}</h1></a>
+                              { hotel.price &&
+                                <Fragment>
+                                  <span>
+                                    <span className='hotel-price'>{hotel.price} UAH</span>
+                                    <i className="fa fa-info-circle" id={`TooltipExample${index}`}></i>
+                                  </span>
+                                  <Tooltip placement="bottom" isOpen={this.state.tooltips[index] && this.state.tooltips[index].price} target={`TooltipExample${index}`} toggle={() => this.toggle(index, 'price')}>
+                                     Мінімальна ціна з людини за 1 ніч
+                                  </Tooltip>
+                                </Fragment>}
+                            </div>
+                            <div className='body-bottom'>
+                              <Rater initialRating={parseFloat(hotel.googleRating)} emptySymbol="fa fa-star-o"
+                                     fullSymbol="fa fa-star" readonly className='hotel-stars'/>
+                              {hotel.location && <a className='3d-link' href={hotel.location} target="_blank">3D карта</a>}
+                            </div>
+                            <div className='body-bottom'>
+                              <div className='icons'>
+                                { hotel.sauna &&
+                                  <Fragment>
+                                    <img id={`Sauna-${index}`} src="/images/sauna.svg"/>
+                                    <Tooltip placement="bottom" isOpen={this.state.tooltips[index] && this.state.tooltips[index].sauna} target={`Sauna-${index}`} toggle={() => this.toggle(index, 'sauna')}>
+                                      Баня
+                                    </Tooltip>
+                                  </Fragment>}
+                                { hotel.chan &&
+                                  <Fragment>
+                                    <img id={`Chan-${index}`} src="/images/chan.png"/>
+                                    <Tooltip placement="bottom" isOpen={this.state.tooltips[index] && this.state.tooltips[index].chan} target={`Chan-${index}`} toggle={() => this.toggle(index, 'chan')}>
+                                      Чан
+                                    </Tooltip>
+                                  </Fragment>}
+                                { hotel.disco &&
+                                  <Fragment>
+                                    <img id={`Disco-${index}`} src="/images/disco.svg"/>
+                                    <Tooltip placement="bottom" isOpen={this.state.tooltips[index] && this.state.tooltips[index].disco} target={`Disco-${index}`} toggle={() => this.toggle(index, 'disco')}>
+                                      Дискотека
+                                    </Tooltip>
+                                  </Fragment>}
+                              </div>
+                              { hotel.allowBooking &&
+                                <Fragment>
+                                  <button id={`Booking-${index}`} className='btn btn-xs btn-warning'>Online</button>
+                                  <Tooltip placement="bottom" isOpen={this.state.tooltips[index] && this.state.tooltips[index].booking} target={`Booking-${index}`} toggle={() => this.toggle(index, 'booking')}>
+                                    Цей готель можна бронювати Online
+                                  </Tooltip>
+                                </Fragment>}
+                            </div>
+                          </div>
                         </div>
-                        { hotel.allowBooking &&
-                          <Fragment>
-                            <button id={`Booking-${index}`} className='btn btn-xs btn-warning'>Online</button>
-                            <Tooltip placement="bottom" isOpen={this.state.tooltips[index] && this.state.tooltips[index].booking} target={`Booking-${index}`} toggle={() => this.toggle(index, 'booking')}>
-                              Цей готель можна бронювати Online
-                            </Tooltip>
-                          </Fragment>}
                       </div>
-                    </div>
-                  </div>
-                </div>
-              )
-              })}
-          </Masonry>
+                    )
+                    })}
+                </Masonry>
+              </div>
+            </div>
+          </div>
         </div>
         { this.state.showMap &&
           <Modal isOpen={this.state.showMap} toggle={this.handleModal} size="lg">

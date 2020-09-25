@@ -255,7 +255,7 @@ h1, h2, h3, h4, h5, h6 {
     .card {
       background: #e2e2e242;
       border-radius: 10px;
-      box-shadow: 0 5px 15px 0 rgba(0, 0, 0, 0.35);
+      box-shadow: 2px 5px 5px 0 rgba(0, 0, 0, 0.35);
       img {
         border-top-left-radius: 10px;
         border-top-right-radius: 10px;
@@ -669,8 +669,9 @@ h1, h2, h3, h4, h5, h6 {
     border-radius: 10px;
   }
 }
-#full-map {
-  height: 700px;
+#full-map, .hotels-list {
+  height: calc(100vh - 275px);
+  overflow-y: scroll;
 }
 .map-row {
   display: flex;
@@ -690,6 +691,10 @@ h1, h2, h3, h4, h5, h6 {
   }
   .container > .react-calendar-timeline > .header-sticky {
     top: 105px !important;
+  }
+  #full-map {
+    height: 200px;
+    margin: 0 0 20px 5px;
   }
 }
 @media (min-width: 992px) {
