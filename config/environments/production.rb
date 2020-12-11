@@ -76,7 +76,7 @@ Rails.application.configure do
   # Send deprecation notices to registered listeners.
   config.active_support.deprecation = :notify
 
-  config.action_mailer.default_url_options = { :host => 'www.dragobrat.net' }
+  config.action_mailer.default_url_options = { :host => 'https://dragobrat.herokuapp.com' }
 
   config.action_mailer.delivery_method = :smtp
   # SMTP settings for gmail
@@ -85,8 +85,7 @@ Rails.application.configure do
     :port                 => 587,
     :user_name            => ENV['gmail_username'],
     :password             => ENV['gmail_password'],
-    :authentication       => "plain",
-    :enable_starttls_auto => true
+    :authentication       => "login"
   }
 
   # Use default logging formatter so that PID and timestamp are not suppressed.
