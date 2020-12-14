@@ -148,17 +148,6 @@ class Hotel < ApplicationRecord
 
   def update_hotel_rating
     average = self.reviews.average(:rating)
-    self.update_column(:site_rating, average)
-    site_rating = self.site_rating.try(:to_d)
-    google_rating = self.google_rating.try(:to_d)
-    if google_rating && site_rating
-      self.update_column(:average_rating, (google_rating + site_rating)/2)
-    elsif site_rating && !google_rating
-      self.update_column(:average_rating, site_rating)
-    elsif !site_rating && google_rating
-      self.update_column(:average_rating, google_rating)
-    else
-      self.update_column(:average_rating, 0)
-    end
+    self.update_column(:average_rating, average)
   end
 end
