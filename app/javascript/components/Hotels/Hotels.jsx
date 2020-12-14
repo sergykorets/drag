@@ -29,8 +29,8 @@ export default class Hotels extends React.Component {
         min: this.props.minPrice,
         max: this.props.maxPrice
       },
-      mapCenter: [48.247, 24.242],
-      mapZoom: 15,
+      mapCenter: [50.4669642, 30.4881701],
+      mapZoom: 10,
       popups: {}
     };
   }
