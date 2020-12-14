@@ -286,7 +286,7 @@ export default class Form extends React.Component {
             <label>Фото</label>
             <FileDrop
               onDrop={this.onDrop}
-              acceptedFiles='*'
+              acceptedFiles='image/*'
               file={this.state.hotel.photos[0]}
               name='file'
             />
