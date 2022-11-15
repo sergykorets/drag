@@ -56,6 +56,7 @@ gem 'sitemap_generator'
 gem 'fog-aws'
 gem 'meta-tags'
 gem 'kaminari'
+gem 'mimemagic', github: 'mimemagicrb/mimemagic', ref: '01f92d86d15d85cfd0f20dabd025dcbd36a8a60f'
 
 group :development, :test do
   gem 'pry-rails'
