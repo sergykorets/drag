@@ -43,7 +43,7 @@ gem 'jquery-rails'
 gem 'devise'
 gem 'omniauth'
 gem 'omniauth-facebook'
-gem 'rails_admin', '~> 1.3'
+gem 'rails_admin', '~> 1.4'
 gem "font-awesome-rails"
 gem "paperclip", "~> 5.2.0"
 gem 'rails_admin_rollincode', '~> 1.0'
